@@ -1,6 +1,10 @@
-import { LoginForm } from "@/components/login-form";
+import { FileStack, Globe, Headset } from "lucide-react";
 
-export default function LoginPage() {
+export default function layout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-black p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
@@ -43,7 +47,21 @@ export default function LoginPage() {
           </svg>
           Monodat
         </a>
-        <LoginForm />
+        {children}
+        <div className="w-full font-semibold flex justify-between gap-2 flex-col lg:flex-row items-center text-white text-sm">
+          <span className="flex gap-1 items-center">
+            <Globe />
+            <p className="whitespace-nowrap">Monodat website</p>
+          </span>
+          <span className="flex gap-1 items-center">
+            <FileStack />
+            <p>documentations</p>
+          </span>
+          <span className="flex gap-1 items-center">
+            <Headset />
+            <p>support</p>
+          </span>
+        </div>
       </div>
     </div>
   );
