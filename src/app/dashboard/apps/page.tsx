@@ -1,12 +1,21 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
 
 export default function page() {
   return (
     <>
       <div className="flex justify-between mb-3">
         <h1 className="text-4xl font-bold">Applications</h1>
-        <Button className="bg-[#14720C] rounded-full">Create new</Button>
+        <Button className="bg-[#14720C] rounded-full" asChild>
+          <Link
+            href="/dashboard/apps/new
+          "
+            className="hover:no-underline"
+          >
+            Create new
+          </Link>
+        </Button>
       </div>
       <Separator />
       <div className="mt-8 space-y-5">
