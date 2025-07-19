@@ -1,6 +1,5 @@
 "use client";
 
-import { type LucideIcon } from "lucide-react";
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -15,7 +14,7 @@ export function NavMain({
   items: {
     title: string;
     url: string;
-    icon?: LucideIcon;
+    icon?: React.ReactNode;
     isActive?: boolean;
     items?: {
       title: string;
@@ -33,9 +32,10 @@ export function NavMain({
             tooltip={item.title}
             asChild
             isActive={item.url == pathName}
+            className="hover:bg-transparent"
           >
             <Link href={item.url}>
-              {item.icon && <item.icon />}
+              {item.icon && item.icon}
               <span>{item.title}</span>
             </Link>
           </SidebarMenuButton>

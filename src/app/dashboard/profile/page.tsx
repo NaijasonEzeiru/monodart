@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 export default function page() {
   return (
     <div className="relative">
-      <h1 className="text-4xl font-bold">Profile</h1>
+      <h1 className="text-xl font-bold">Profile</h1>
       <Separator />
       <Tabs defaultValue="business" className="w-full mt-8">
         <TabsList className="flex justify-between bg-transparent">

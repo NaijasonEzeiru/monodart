@@ -5,7 +5,7 @@ import { ArrowRight, Loader, Minus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Image from "next/image";
-import { useState } from "react";
+import { type Dispatch, type SetStateAction, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { NewAppSchema } from "@/lib/zodSchema";
+import { EditAppSchema } from "@/lib/zodSchema";
 import { Textarea } from "@/components/ui/textarea";
 import {
   DropdownMenu,
@@ -30,72 +30,125 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { apiAddress } from "@/lib/variables";
 import { toast } from "sonner";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useRouter, useSearchParams } from "next/navigation";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { findAppInfo } from "./page";
 import { convertToWebP } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import { Checkbox } from "@/components/ui/checkbox";
 
-const dataCollectionQuestionaire = [
-  { value: "Location service", selected: false, label: "location" },
-  { value: "Personal information", selected: false, label: "personalInfo" },
-  { value: "Payment information", selected: false, label: "paymentInfo" },
-  { value: "Device information", selected: false, label: "deviceInfo" },
-  { value: "GPS tracking", selected: false, label: "gps" },
-  { value: "Images data", selected: false, label: "phot" },
-  { value: "Biometrics data", selected: false, label: "biometric" },
-  { value: "User contacts", selected: false, label: "contacts" },
-];
-
-const CATEGORIES = [
-  "Social network",
-  "Crypto exchange",
-  "Utilities",
-  "Bank",
-  "Payments",
-  "Editor",
-  "Magazine",
-  "News",
-  "Others",
-];
-
-const APPTYPE = ["Application", "Game", "Browser"];
-
-export default function Page() {
-  const searchParams = useSearchParams();
-  const appName = searchParams.get("app");
-  const router = useRouter();
-
-  const form = useForm<z.infer<typeof NewAppSchema>>({
-    resolver: zodResolver(NewAppSchema),
-    defaultValues: { appName: appName! },
-    reValidateMode: "onSubmit",
+export default function UpdateApp({
+  app,
+  setAppEditID,
+}: {
+  app: ReturnType<typeof findAppInfo>;
+  setAppEditID: Dispatch<SetStateAction<null>>;
+}) {
+  const dataCollected = [
+    {
+      key: "location",
+      value: "Location service",
+      selected: app?.dataCollected?.location,
+    },
+    {
+      key: "personalInfo",
+      value: "Personal information",
+      selected: app?.dataCollected?.personalInfo,
+    },
+    {
+      key: "paymentInfo",
+      value: "Payment information",
+      selected: app?.dataCollected?.paymentInfo,
+    },
+    {
+      key: "deviceInfo",
+      value: "Device information",
+      selected: app?.dataCollected?.deviceInfo,
+    },
+    { key: "gps", value: "GPS tracking", selected: app?.dataCollected?.gps },
+    { key: "phot", value: "Images data", selected: app?.dataCollected?.phot },
+    {
+      key: "biometric",
+      value: "Biometrics data",
+      selected: app?.dataCollected?.biometric,
+    },
+    {
+      key: "contacts",
+      value: "User contacts",
+      selected: app?.dataCollected?.contacts,
+    },
+  ];
+  const form = useForm<z.infer<typeof EditAppSchema>>({
+    resolver: zodResolver(EditAppSchema),
+    defaultValues: {
+      appCat: app.appData?.appCat || undefined,
+      appDescription: app.appData?.appDescription || undefined,
+      // appLogo: app.appData?.appLogo || undefined,
+      appName: app.appData?.appName || undefined,
+      appPassword: app.appData?.appPassword || undefined,
+      appPrivacyPolicy: app.appData?.appPrivacyPolicy || undefined,
+      appType: app.appData?.appType || undefined,
+      appuserName: app.appData?.appuserName || undefined,
+      appVersion: app.appData?.appVersion || undefined,
+      copyright: app.appData?.copyright || undefined,
+      rating: app.appData?.rating || undefined,
+      loginAccess: !!app.appData?.appuserName,
+      // whatsNew: app.appData?.whatsNew || undefined,
+      dataCollected: dataCollected.filter((h) => h.selected).map((v) => v.key),
+    },
   });
 
-  const loginAccess = form.watch("loginAccess");
-
-  const [appLogoImg, setAppLogoImg] = useState("");
-  const [apkFile, setApkFile] = useState("");
-  const [screenshotImgs, setScreenshootsImgs] = useState(["", "", "", ""]);
-  const [files, setFiles] = useState<(null | File)[]>([null, null, null, null]);
-  const [selectedItems, setSelectedItems] = useState([
-    { value: "Location service", selected: false },
-    { value: "Personal information", selected: false },
-    { value: "Payment information", selected: false },
-    { value: "Device information", selected: false },
-    { value: "GPS tracking", selected: false },
-    { value: "Images data", selected: false },
-    { value: "Biometrics data", selected: false },
-    { value: "User contacts", selected: false },
+  const [appLogoImg, setAppLogoImg] = useState(app.appData?.appLogo || "");
+  const [apkFile, setApkFile] = useState<any>(app.appData?.apkUrl);
+  const [screenshotImgs, setScreenshootsImgs] = useState([
+    app.screenshots?.[0]?.screenshot1,
+    app.screenshots?.[0]?.screenshot2,
+    app.screenshots?.[0]?.screenshot3,
+    app.screenshots?.[0]?.screenshot4,
   ]);
+  const [files, setFiles] = useState<(null | File)[]>([null, null, null, null]);
+  const [selectedItems, setSelectedItems] = useState(dataCollected);
+
+  const v = dataCollected.filter((f) => f.selected).map((g) => g.key);
+
+  console.log({ v, dataCollected });
+
+  const handleAPKUpload = async (apk: File | undefined) => {
+    if (apk) {
+      setApkFile("loading");
+      const formData = new FormData();
+      try {
+        formData.append("file", apk);
+        formData.append("appName", app.appData?.appName!);
+        const res = await fetch(`${apiAddress}/upload-app`, {
+          method: "POST",
+          body: formData,
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("monodat_token"),
+          },
+        });
+        const response = await res.json();
+        if (res.ok) {
+          setApkFile(response?.apkUrl);
+          return;
+        } else {
+          form.setValue("apk", "");
+          setApkFile("");
+          toast.error("Unable to upload APK", {
+            description: response?.message || "Something went wrong",
+          });
+        }
+      } catch (err) {
+        form.setValue("apk", "");
+        setApkFile("");
+        toast.error("Unable to upload APK", {
+          description: "Ooops!!! Something went wrong",
+        });
+        console.log({ err });
+      }
+    }
+  };
 
   const handleAppLogoChange = async (img: File | undefined) => {
-    if (img && appName) {
+    if (img) {
       const validate = z
         .any()
         .refine((files) => files.size <= 2000000, "Max image size is 2MB.")
@@ -113,7 +166,7 @@ export default function Page() {
         const webpFile = await convertToWebP(img);
         formData.append("file", webpFile);
         formData.append("imageCat", "appLogo");
-        formData.append("appName", appName);
+        formData.append("appName", app.appData?.appName!);
         const res = await fetch(`${apiAddress}/upload-images`, {
           method: "POST",
           body: formData,
@@ -142,53 +195,11 @@ export default function Page() {
         console.log({ err });
       }
       // setAppLogoImg(URL.createObjectURL(img));
-    } else if (!appName) {
-      toast.error("App name is undefined");
-      router.push("/dashboard/apps");
-    }
-  };
-
-  const handleAPKUpload = async (apk: File | undefined) => {
-    if (apk && appName) {
-      setApkFile("loading");
-      const formData = new FormData();
-      try {
-        formData.append("file", apk);
-        formData.append("appName", appName);
-        const res = await fetch(`${apiAddress}/upload-app`, {
-          method: "POST",
-          body: formData,
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("monodat_token"),
-          },
-        });
-        const response = await res.json();
-        if (res.ok) {
-          setApkFile(response?.apkUrl);
-          return;
-        } else {
-          form.setValue("apk", "");
-          setApkFile("");
-          toast.error("Unable to upload APK", {
-            description: response?.message || "Something went wrong",
-          });
-        }
-      } catch (err) {
-        form.setValue("apk", "");
-        setApkFile("");
-        toast.error("Unable to upload APK", {
-          description: "Ooops!!! Something went wrong",
-        });
-        console.log({ err });
-      }
-    } else if (!appName) {
-      toast.error("App name is undefined");
-      router.push("/dashboard/apps");
     }
   };
 
   const handleScreenshotChange = async (img: File | undefined, i: number) => {
-    if (img && appName) {
+    if (img) {
       console.log({ img });
       const validate = z
         .any()
@@ -214,7 +225,7 @@ export default function Page() {
         console.log({ webpFile });
         formData.append("file", webpFile);
         formData.append("imageNumber", (i + 1).toString());
-        formData.append("appName", appName);
+        formData.append("appName", app.appData?.appName!);
         formData.append("imageCat", "screenshot");
         const res = await fetch(`${apiAddress}/upload-images`, {
           method: "POST",
@@ -237,15 +248,13 @@ export default function Page() {
         }
       } catch (err) {
         items[i] = "";
+        setScreenshootsImgs([...items]);
         form.setValue(`screenShots.${i}`, "");
         toast.error("Unable to upload image", {
           description: "Ooops!!! Something went wrong",
         });
       }
       setScreenshootsImgs([...items]);
-    } else if (!appName) {
-      toast.error("App name is undefined");
-      router.push("/dashboard/apps");
     }
   };
 
@@ -254,24 +263,12 @@ export default function Page() {
     const s = [...selectedItems];
     s[indexById].selected = !s[indexById].selected;
     setSelectedItems(s);
-    // if (!selectedItems.includes(value)) {
-    //   setSelectedItems((prev) => [...prev, value]);
-    // } else {
-    //   const referencedArray = [...selectedItems];
-    //   const indexOfItemToBeRemoved = referencedArray.indexOf(value);
-    //   referencedArray.splice(indexOfItemToBeRemoved, 1);
-    //   setSelectedItems(referencedArray);
-    // }
   };
 
-  // const isOptionSelected = (value: string): boolean => {
-  //   return selectedItems.includes(value) ? true : false;
-  // };
-
-  async function onSubmit(body: z.infer<typeof NewAppSchema>) {
+  async function onSubmit(body: z.infer<typeof EditAppSchema>) {
     console.log({ selectedItems });
     try {
-      const res = await fetch(`${apiAddress}/submit-newapp`, {
+      const res = await fetch(`${apiAddress}/update-app`, {
         method: "POST",
         // credentials: "include",
         headers: {
@@ -281,7 +278,6 @@ export default function Page() {
         body: JSON.stringify({
           ...body,
           dataCollected: selectedItems,
-          appName,
           apk: apkFile,
           screenShots: screenshotImgs,
           appLogo: appLogoImg,
@@ -290,7 +286,7 @@ export default function Page() {
       const response = await res.json();
       if (res.ok) {
         toast.success(response?.message || "App created successfully");
-        router.push("/dashboard/apps");
+        setAppEditID(null);
       } else {
         toast.error(response?.message || "Something went wrong");
       }
@@ -299,27 +295,30 @@ export default function Page() {
     }
   }
 
+  const loginAccess = form.watch("loginAccess");
+
   console.log({ errors: form.formState.errors });
   console.log({ vals: form.watch() });
+  console.log({ app });
 
   return (
     <>
-      <h1 className="text-xl font-bold mb-3">Create new application</h1>
+      <h1 className="text-xl font-bold mb-3">Update Application</h1>
       <Separator />
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-7 mt-6 mb-16 text-[#808080]"
+          className="space-y-7 mt-6 mb-16"
         >
-          <div className="grid gap-3 md:grid-cols-3 items-end max-w-4xl">
+          <div className="grid gap-3 md:grid-cols-2 items-end">
             <FormField
               control={form.control}
-              name="appName"
+              name="appVersion"
               render={({ field }) => (
                 <FormItem className="space-y-0.5">
-                  <FormLabel>App name</FormLabel>
+                  <FormLabel>Enter app version</FormLabel>
                   <FormControl>
-                    <Input placeholder="New app version" {...field} disabled />
+                    <Input placeholder="New app version" {...field} />
                   </FormControl>
                   <FormMessage className="absolute" />
                 </FormItem>
@@ -327,58 +326,16 @@ export default function Page() {
             />
             <FormField
               control={form.control}
-              name="appCat"
+              name="whatsNew"
               render={({ field }) => (
                 <FormItem className="space-y-0.5">
-                  <FormLabel>App category</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="bg-gray-300">
-                        <SelectValue placeholder="App category" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {CATEGORIES.map((e) => (
-                        <SelectItem value={e} key={e}>
-                          {e}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="appType"
-              render={({ field }) => (
-                <FormItem className="space-y-0.5">
-                  <FormLabel>App type</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="bg-gray-300 text-black">
-                        <SelectValue
-                          placeholder="App type"
-                          className="text-black placeholder:text-black"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {APPTYPE.map((e) => (
-                        <SelectItem value={e} key={e}>
-                          {e}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
+                  <FormControl>
+                    <Input
+                      placeholder="Whats new in this version?"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="absolute" />
                 </FormItem>
               )}
             />
@@ -387,7 +344,7 @@ export default function Page() {
             <div className="mt-2">
               App logo
               <label
-                className="grid relative items-center w-36 h-36 rounded-lg border border-border"
+                className="grid relative items-center w-[132px] h-[132px] rounded-lg border border-border"
                 tabIndex={0}
                 aria-label="Add image"
               >
@@ -489,7 +446,7 @@ export default function Page() {
                       ) : (
                         <Image
                           src={screenshotImgs[i]}
-                          alt={`image -`}
+                          alt={`screenshot - ${i + 1}`}
                           className="h-full w-full object-cover rounded-lg"
                           width={215}
                           height={466}
@@ -511,7 +468,7 @@ export default function Page() {
                             hidden
                             onChange={(e) => {
                               onChange(e);
-                              handleScreenshotChange(e.target.files?.[0], i);
+                              handleScreenshotChange(e.target.files![0], i);
                             }}
                             ref={ref}
                             disabled={disabled}
@@ -529,7 +486,6 @@ export default function Page() {
                   {form.formState.errors?.screenShots?.[i]?.message as string}
                 </p>
                 <button
-                  type="button"
                   onClick={() =>
                     setScreenshootsImgs(
                       screenshotImgs.map((item, index) =>
@@ -548,36 +504,10 @@ export default function Page() {
             <p className="mb-1 text-muted-foreground">
               1290 x 2796 pixels (portrait)
             </p>
-            <Separator className="w-8/12" />
+            <Separator />
           </div>
           <div className="flex gap-10">
             <div className="max-w-3xl w-full space-y-5">
-              <div className="flex gap-7">
-                <FormField
-                  control={form.control}
-                  name="rating"
-                  render={({ field }) => (
-                    <FormItem className="space-y-0.5 w-full">
-                      <FormControl>
-                        <Input placeholder="Age rating" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="appVersion"
-                  render={({ field }) => (
-                    <FormItem className="space-y-0.5 w-full">
-                      <FormControl>
-                        <Input placeholder="App version" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
               <FormField
                 control={form.control}
                 name="appPrivacyPolicy"
@@ -606,6 +536,32 @@ export default function Page() {
                   </FormItem>
                 )}
               />
+              <div className="flex gap-7">
+                <FormField
+                  control={form.control}
+                  name="rating"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0.5 w-full">
+                      <FormControl>
+                        <Input placeholder="Age rating" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="appVersion"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0.5 w-full">
+                      <FormControl>
+                        <Input placeholder="App version" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <FormField
                 control={form.control}
                 name="loginAccess"
@@ -678,12 +634,12 @@ export default function Page() {
                     </span>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  {dataCollectionQuestionaire.map((value, index: number) => {
+                  {dataCollected.map((value, index: number) => {
                     return (
                       <DropdownMenuCheckboxItem
                         onSelect={(e) => e.preventDefault()}
                         key={index}
-                        checked={selectedItems[index].selected}
+                        checked={selectedItems[index].selected!}
                         onCheckedChange={() => handleSelectChange(value.value)}
                       >
                         {value.value}

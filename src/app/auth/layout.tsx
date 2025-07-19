@@ -1,4 +1,4 @@
-import { FileStack, Globe, Headset } from "lucide-react";
+import Link from "next/link";
 
 export default function layout({
   children,
@@ -8,8 +8,8 @@ export default function layout({
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-black p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
-        <a
-          href="#"
+        <Link
+          href="/"
           className="flex items-center gap-2 self-center font-medium text-white"
         >
           <svg
@@ -46,22 +46,8 @@ export default function layout({
             />
           </svg>
           Monodat
-        </a>
+        </Link>
         {children}
-        <div className="w-full font-semibold flex justify-between gap-2 flex-col lg:flex-row items-center text-white text-sm">
-          <span className="flex gap-1 items-center">
-            <Globe />
-            <p className="whitespace-nowrap">Monodat website</p>
-          </span>
-          <span className="flex gap-1 items-center">
-            <FileStack />
-            <p>documentations</p>
-          </span>
-          <span className="flex gap-1 items-center">
-            <Headset />
-            <p>support</p>
-          </span>
-        </div>
       </div>
     </div>
   );

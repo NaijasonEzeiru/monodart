@@ -4,7 +4,7 @@ export default function page() {
   return (
     <>
       <div className="flex justify-between mb-3">
-        <h1 className="text-4xl font-bold">App review</h1>
+        <h1 className="text-xl font-bold">App Review</h1>
       </div>
       <Separator />
       <div className="mt-8 space-y-5">

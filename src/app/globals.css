@@ -90,3 +90,20 @@ body {
     @apply hover:underline;
   }
 }
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.react-international-phone-input-container .react-international-phone-input {
+  width: 100%;
+}
+
+.inline-size {
+  inline-size: 100%;
+}
