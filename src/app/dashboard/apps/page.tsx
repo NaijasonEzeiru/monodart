@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { appData, dataCollected, screenshots } from "@/lib/types";
 import { formatUTCDate } from "@/lib/utils";
 import { apiAddress } from "@/lib/variables";
 import { Loader } from "lucide-react";
@@ -38,18 +39,6 @@ const data = [
     updatedAt: "2025-07-18T13:04:22.000Z",
     screenshots: [
       {
-        id: 4,
-        userUid: "963b7a1e-8fd7-4118-9bcb-59c652afba47",
-        screenshot1: null,
-        screenshot2: null,
-        screenshot3: null,
-        screenshot4: null,
-        header: null,
-        appName: null,
-        createdAt: "2025-07-18T13:04:22.000Z",
-        updatedAt: "2025-07-18T13:04:22.000Z",
-      },
-      {
         id: 5,
         userUid: "963b7a1e-8fd7-4118-9bcb-59c652afba47",
         screenshot1: null,
@@ -63,21 +52,6 @@ const data = [
       },
     ],
     dataCollected: [
-      {
-        id: 4,
-        userUid: "963b7a1e-8fd7-4118-9bcb-59c652afba47",
-        location: null,
-        personalInfo: null,
-        paymentInfo: null,
-        deviceInfo: null,
-        gps: null,
-        phot: null,
-        biometric: null,
-        contacts: null,
-        appName: null,
-        createdAt: "2025-07-18T13:04:22.000Z",
-        updatedAt: "2025-07-18T13:04:22.000Z",
-      },
       {
         id: 5,
         userUid: "963b7a1e-8fd7-4118-9bcb-59c652afba47",
@@ -98,7 +72,7 @@ const data = [
       {
         id: 4,
         userUid: "963b7a1e-8fd7-4118-9bcb-59c652afba47",
-        appName: null,
+        appName: "",
         appDescription: null,
         appLogo: null,
         appPrivacyPolicy: null,
@@ -115,10 +89,12 @@ const data = [
         createdAt: "2025-07-18T13:04:22.000Z",
         updatedAt: "2025-07-18T13:04:22.000Z",
       },
+    ],
+    updateApp: [
       {
-        id: 5,
+        id: 4,
         userUid: "963b7a1e-8fd7-4118-9bcb-59c652afba47",
-        appName: "Test-App",
+        appName: "",
         appDescription: null,
         appLogo: null,
         appPrivacyPolicy: null,
@@ -132,11 +108,10 @@ const data = [
         appuserName: null,
         status: null,
         apkUrl: null,
-        createdAt: "2025-07-18T13:09:11.000Z",
-        updatedAt: "2025-07-18T13:09:11.000Z",
+        createdAt: "2025-07-18T13:04:22.000Z",
+        updatedAt: "2025-07-18T13:04:22.000Z",
       },
     ],
-    updateApp: [],
     setting: {
       id: 3,
       userUid: "963b7a1e-8fd7-4118-9bcb-59c652afba47",
@@ -148,40 +123,17 @@ const data = [
   },
 ];
 
-export function findAppInfo(dat: typeof data, appName: string) {
-  const entry = dat[0]; // assuming single element in data array
-
-  const [dataCollected] = entry.dataCollected.filter(
-    (item) => item?.appName === appName || null
-  );
-
-  const [screenshots] = entry.screenshots.filter(
-    (item) => item?.appName === appName || null
-  );
-
-  const appData =
-    entry.updateApp.find((item) => item?.appName === appName) ||
-    entry.newApp.find((item) => item?.appName === appName) ||
-    null;
-
-  return {
-    dataCollected,
-    screenshots,
-    appData,
-  };
-}
-
-// type Result = {
-//   dataCollected: typeof data[0]
-// }
-
 export default function Page() {
   const router = useRouter();
   const [appNameSubmitting, setAppNameSubmitting] = useState(false);
   const [appName, setAppName] = useState("");
   const [apps, setApps] = useState<typeof data>([]);
   const [fetching, setFectching] = useState(true);
-  const [appEditID, setAppEditID] = useState(null);
+  const [appEditID, setAppEditID] = useState<null | {
+    dataCollected: dataCollected;
+    screenshots: screenshots;
+    appData: appData;
+  }>(null);
 
   useEffect(() => {
     getApps();
@@ -191,17 +143,16 @@ export default function Page() {
     const entry = apps[0]; // assuming single element in data array
 
     const [dataCollected] = entry.dataCollected.filter(
-      (item) => item?.appName === appName || null
+      (item) => item?.appName === appName
     );
 
     const screenshots = entry.screenshots.filter(
-      (item) => item?.appName === appName || null
+      (item) => item?.appName === appName
     );
 
     const appData =
       entry.updateApp.find((item) => item?.appName === appName) ||
-      entry.newApp.find((item) => item?.appName === appName) ||
-      null;
+      entry.newApp.find((item) => item?.appName === appName)!;
 
     console.log({ appData });
 
@@ -230,6 +181,7 @@ export default function Page() {
       }
     } catch (err) {
       toast.error("Ooops!!! Something went wrong");
+      console.error({ err });
     } finally {
       setFectching(false);
     }
@@ -259,6 +211,7 @@ export default function Page() {
         toast.error(response?.message || "Something went wrong");
       }
     } catch (err) {
+      console.error({ err });
       toast.error("Ooops!!! Something went wrong");
     } finally {
       setAppNameSubmitting(false);
@@ -370,13 +323,15 @@ export default function Page() {
                   <button
                     className="items-center justify-center gap-2 whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-primary-foreground hover:bg-primary/90 size-8 bg-primary rounded-full mx-auto block text-2xl"
                     onClick={() => {
-                      app.status
-                        ? findApp(app?.appName!)
-                        : router.push(
-                            `/dashboard/apps/new?app=${app
-                              .appName!.replace(/\s{2,}/g, " ")
-                              .trim()}`
-                          );
+                      if (app.status) {
+                        findApp(app.appName!);
+                      } else if (app.appName) {
+                        router.push(
+                          `/dashboard/apps/new?app=${app.appName
+                            .replace(/\s{2,}/g, " ")
+                            .trim()}`
+                        );
+                      }
                     }}
                   >
                     +

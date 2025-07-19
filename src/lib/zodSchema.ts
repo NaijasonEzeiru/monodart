@@ -1,8 +1,6 @@
 import { z } from "zod";
 import isMobilePhone from "validator/es/lib/isMobilePhone";
 
-const MAX_FILE_SIZE = 2000000;
-
 export const NewAppSchema = z.object({
   appLogo: z.any(),
   apk: z.any(),

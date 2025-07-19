@@ -30,17 +30,27 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { apiAddress } from "@/lib/variables";
 import { toast } from "sonner";
-import { findAppInfo } from "./page";
+// import { findAppInfo } from "./page";
 import { convertToWebP } from "@/lib/utils";
-import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
+import { appData, dataCollected, screenshots } from "@/lib/types";
 
 export default function UpdateApp({
   app,
   setAppEditID,
 }: {
-  app: ReturnType<typeof findAppInfo>;
-  setAppEditID: Dispatch<SetStateAction<null>>;
+  app: {
+    dataCollected: dataCollected;
+    appData: appData;
+    screenshots: screenshots;
+  };
+  setAppEditID: Dispatch<
+    SetStateAction<{
+      dataCollected: dataCollected;
+      screenshots: screenshots;
+      appData: appData;
+    } | null>
+  >;
 }) {
   const dataCollected = [
     {
@@ -97,7 +107,9 @@ export default function UpdateApp({
   });
 
   const [appLogoImg, setAppLogoImg] = useState(app.appData?.appLogo || "");
-  const [apkFile, setApkFile] = useState<any>(app.appData?.apkUrl);
+  const [apkFile, setApkFile] = useState<string | undefined | null>(
+    app.appData?.apkUrl
+  );
   const [screenshotImgs, setScreenshootsImgs] = useState([
     app.screenshots?.[0]?.screenshot1,
     app.screenshots?.[0]?.screenshot2,
@@ -117,7 +129,9 @@ export default function UpdateApp({
       const formData = new FormData();
       try {
         formData.append("file", apk);
-        formData.append("appName", app.appData?.appName!);
+        if (app.appData) {
+          formData.append("appName", app.appData.appName!);
+        }
         const res = await fetch(`${apiAddress}/upload-app`, {
           method: "POST",
           body: formData,
@@ -166,7 +180,9 @@ export default function UpdateApp({
         const webpFile = await convertToWebP(img);
         formData.append("file", webpFile);
         formData.append("imageCat", "appLogo");
-        formData.append("appName", app.appData?.appName!);
+        if (app.appData) {
+          formData.append("appName", app.appData.appName!);
+        }
         const res = await fetch(`${apiAddress}/upload-images`, {
           method: "POST",
           body: formData,
@@ -225,7 +241,9 @@ export default function UpdateApp({
         console.log({ webpFile });
         formData.append("file", webpFile);
         formData.append("imageNumber", (i + 1).toString());
-        formData.append("appName", app.appData?.appName!);
+        if (app.appData) {
+          formData.append("appName", app.appData.appName!);
+        }
         formData.append("imageCat", "screenshot");
         const res = await fetch(`${apiAddress}/upload-images`, {
           method: "POST",
@@ -253,6 +271,7 @@ export default function UpdateApp({
         toast.error("Unable to upload image", {
           description: "Ooops!!! Something went wrong",
         });
+        console.log({ err });
       }
       setScreenshootsImgs([...items]);
     }
@@ -292,6 +311,7 @@ export default function UpdateApp({
       }
     } catch (err) {
       toast.error("Ooops!!! Something went wrong");
+      console.log({ err });
     }
   }
 
@@ -445,7 +465,7 @@ export default function UpdateApp({
                         </span>
                       ) : (
                         <Image
-                          src={screenshotImgs[i]}
+                          src={screenshotImgs[i]!}
                           alt={`screenshot - ${i + 1}`}
                           className="h-full w-full object-cover rounded-lg"
                           width={215}
@@ -639,7 +659,7 @@ export default function UpdateApp({
                       <DropdownMenuCheckboxItem
                         onSelect={(e) => e.preventDefault()}
                         key={index}
-                        checked={selectedItems[index].selected!}
+                        checked={!!selectedItems[index].selected}
                         onCheckedChange={() => handleSelectChange(value.value)}
                       >
                         {value.value}

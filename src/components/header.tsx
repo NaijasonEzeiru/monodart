@@ -1,9 +1,7 @@
 "use client";
 
-import { Loader } from "lucide-react";
 import Link from "next/link";
-import { useContext, useState } from "react";
-import AuthContext from "./auth-context";
+import { useState } from "react";
 import { Button } from "./ui/button";
 
 function Header() {
@@ -149,37 +147,37 @@ function Header() {
   );
 }
 
-function AuthButton() {
-  const { user, signingOut, authChecking, signout } = useContext(AuthContext);
-  // TODO: design disabled button
+// function AuthButton() {
+//   const { user, signingOut, authChecking, signout } = useContext(AuthContext);
+//   // TODO: design disabled button
 
-  if (authChecking) {
-    return (
-      <Button
-        disabled
-        className="bg-[#D9D9D9] hover:bg-gray-300 text-black rounded-full px-8 py-2 transition-colors lg:w-fit w-full text-center hover:no-underline"
-      >
-        <Loader className="animate-spin" />
-      </Button>
-    );
-  } else if (user) {
-    return (
-      <button className="bg-[#D9D9D9] hover:bg-gray-300 text-black rounded-full px-8 py-2 transition-colors lg:w-fit w-full text-center hover:no-underline">
-        Log out
-      </button>
-    );
-  } else if (!user) {
-    return (
-      <Link
-        href="/auth/login"
-        className="bg-[#D9D9D9] hover:bg-gray-300 text-black rounded-full px-8 py-2 transition-colors lg:w-fit w-full text-center hover:no-underline"
-      >
-        Sign in
-      </Link>
-    );
-  } else {
-    return <p>How</p>;
-  }
-}
+//   if (authChecking) {
+//     return (
+//       <Button
+//         disabled
+//         className="bg-[#D9D9D9] hover:bg-gray-300 text-black rounded-full px-8 py-2 transition-colors lg:w-fit w-full text-center hover:no-underline"
+//       >
+//         <Loader className="animate-spin" />
+//       </Button>
+//     );
+//   } else if (user) {
+//     return (
+//       <button className="bg-[#D9D9D9] hover:bg-gray-300 text-black rounded-full px-8 py-2 transition-colors lg:w-fit w-full text-center hover:no-underline">
+//         Log out
+//       </button>
+//     );
+//   } else if (!user) {
+//     return (
+//       <Link
+//         href="/auth/login"
+//         className="bg-[#D9D9D9] hover:bg-gray-300 text-black rounded-full px-8 py-2 transition-colors lg:w-fit w-full text-center hover:no-underline"
+//       >
+//         Sign in
+//       </Link>
+//     );
+//   } else {
+//     return <p>How</p>;
+//   }
+// }
 
 export default Header;

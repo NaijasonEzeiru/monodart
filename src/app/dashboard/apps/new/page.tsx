@@ -5,7 +5,7 @@ import { ArrowRight, Loader, Minus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Image from "next/image";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -66,7 +66,7 @@ const CATEGORIES = [
 
 const APPTYPE = ["Application", "Game", "Browser"];
 
-export default function Page() {
+function Page() {
   const searchParams = useSearchParams();
   const appName = searchParams.get("app");
   const router = useRouter();
@@ -241,6 +241,7 @@ export default function Page() {
         toast.error("Unable to upload image", {
           description: "Ooops!!! Something went wrong",
         });
+        console.log({ err });
       }
       setScreenshootsImgs([...items]);
     } else if (!appName) {
@@ -296,6 +297,7 @@ export default function Page() {
       }
     } catch (err) {
       toast.error("Ooops!!! Something went wrong");
+      console.log({ err });
     }
   }
 
@@ -804,5 +806,13 @@ export default function Page() {
         </form>
       </Form>
     </>
+  );
+}
+
+export default function Test() {
+  return (
+    <Suspense>
+      <Page />
+    </Suspense>
   );
 }
