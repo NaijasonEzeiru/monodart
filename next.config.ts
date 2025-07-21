@@ -5,6 +5,11 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "developers.monodat.com", pathname: "**" },
+      {
+        protocol: "https",
+        hostname: "www.huntersapp.xyz",
+        pathname: "**",
+      },
     ],
   },
 };

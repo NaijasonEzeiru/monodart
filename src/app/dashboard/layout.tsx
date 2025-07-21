@@ -1,16 +1,35 @@
+"use client";
+
 import { AppSidebar } from "@/components/app-sidebar";
+import AuthContext from "@/components/auth-context";
+import LoadingPage from "@/components/loading";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { useRouter } from "next/navigation";
+import { useContext, useEffect } from "react";
+import { toast } from "sonner";
 
 export default function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { user, authChecking } = useContext(AuthContext);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!authChecking && !user) {
+      toast.error("You are not Authorized to view this page", {
+        description: "Please log in to before accessing this page",
+      });
+      router.replace("/auth/login");
+    }
+  }, [user]);
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -19,22 +38,14 @@ export default function DashboardLayout({
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
-            {/* <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Building Your Application
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb> */}
           </div>
         </header>
-        <div className="px-8">{children}</div>
+        {authChecking || !user ? (
+          <LoadingPage />
+        ) : (
+          <div className="px-8">{children}</div>
+        )}
+        <div className="px-8"></div>
       </SidebarInset>
     </SidebarProvider>
   );

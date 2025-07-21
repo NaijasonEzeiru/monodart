@@ -30,4 +30,5 @@ export type appData = {
   rating: null | string;
   appCat: null | string;
   appType: null | string;
+  // screenshots: screenshots;
 };

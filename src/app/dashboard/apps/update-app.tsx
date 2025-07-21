@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight, Loader, Minus } from "lucide-react";
+import { ArrowRight, ChevronLeftIcon, Loader, Minus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Image from "next/image";
@@ -102,7 +102,8 @@ export default function UpdateApp({
       rating: app.appData?.rating || undefined,
       loginAccess: !!app.appData?.appuserName,
       // whatsNew: app.appData?.whatsNew || undefined,
-      dataCollected: dataCollected.filter((h) => h.selected).map((v) => v.key),
+      dataCollected:
+        dataCollected?.filter((h) => h?.selected).map((v) => v?.key) || [],
     },
   });
 
@@ -118,10 +119,6 @@ export default function UpdateApp({
   ]);
   const [files, setFiles] = useState<(null | File)[]>([null, null, null, null]);
   const [selectedItems, setSelectedItems] = useState(dataCollected);
-
-  const v = dataCollected.filter((f) => f.selected).map((g) => g.key);
-
-  console.log({ v, dataCollected });
 
   const handleAPKUpload = async (apk: File | undefined) => {
     if (apk) {
@@ -323,6 +320,12 @@ export default function UpdateApp({
 
   return (
     <>
+      <button
+        className="inline-flex items-center justify-center rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground h-10 w-10 absolute top-3 left-12"
+        onClick={() => setAppEditID(null)}
+      >
+        <ChevronLeftIcon size={24} />
+      </button>
       <h1 className="text-xl font-bold mb-3">Update Application</h1>
       <Separator />
       <Form {...form}>
@@ -380,7 +383,7 @@ export default function UpdateApp({
                       </span>
                     ) : (
                       <Image
-                        src={appLogoImg}
+                        src={`https://www.huntersapp.xyz/developers.monodat.com/${appLogoImg}`}
                         alt="App logo"
                         className="h-full w-full object-cover rounded-lg"
                         width={132}
@@ -465,7 +468,7 @@ export default function UpdateApp({
                         </span>
                       ) : (
                         <Image
-                          src={screenshotImgs[i]!}
+                          src={`https://www.huntersapp.xyz/developers.monodat.com/${screenshotImgs[i]}`}
                           alt={`screenshot - ${i + 1}`}
                           className="h-full w-full object-cover rounded-lg"
                           width={215}

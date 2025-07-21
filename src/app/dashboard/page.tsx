@@ -1,5 +1,6 @@
-// "use client";
+"use client";
 
+import AuthContext from "@/components/auth-context";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,9 +11,12 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { TrendingUp } from "lucide-react";
+import { ChevronLeftIcon, TrendingUp } from "lucide-react";
+import { useContext } from "react";
 
 export default function Page() {
+  const { user } = useContext(AuthContext);
+
   return (
     <div className="mb-14">
       <div className="flex justify-between font-semibold mb-10">
@@ -21,12 +25,12 @@ export default function Page() {
           <Label htmlFor="airplane-mode" className="text-primary text-xl">
             Account is live
           </Label>
-          <Switch
+          {/* <Switch
             id="airplane-mode"
             defaultChecked={true}
             disabled
             className="disabled:opacity-100"
-          />
+          /> */}
         </div>
       </div>
       {/* <div className="flex gap-6 flex-col lg:flex-row text-white">
@@ -50,7 +54,8 @@ export default function Page() {
           <CardHeader>
             <CardDescription>Collection wallet</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              $1,250.00
+              {user?.[0]?.balance || "0.00"}
+              {/* $1,250.00 */}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
@@ -66,7 +71,7 @@ export default function Page() {
           <CardHeader>
             <CardDescription>Main wallet</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              $1,250.00
+              {user?.[0]?.balance || "0.00"}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex justify-between flex-col items-start sm:items-center sm:flex-row">

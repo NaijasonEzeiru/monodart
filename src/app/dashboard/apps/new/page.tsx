@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight, Loader, Minus } from "lucide-react";
+import { ArrowRight, ChevronLeftIcon, Loader, Minus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Image from "next/image";
@@ -306,6 +306,12 @@ function Page() {
 
   return (
     <>
+      <button
+        className="inline-flex items-center justify-center rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground h-10 w-10 absolute top-3 left-12"
+        onClick={() => router.push("/dashboard/apps")}
+      >
+        <ChevronLeftIcon size={24} />
+      </button>
       <h1 className="text-xl font-bold mb-3">Create new application</h1>
       <Separator />
       <Form {...form}>
@@ -405,7 +411,7 @@ function Page() {
                       </span>
                     ) : (
                       <Image
-                        src={appLogoImg}
+                        src={`https://www.huntersapp.xyz/developers.monodat.com/${appLogoImg}`}
                         alt="App logo"
                         className="h-full w-full object-cover rounded-lg"
                         width={132}
@@ -490,7 +496,7 @@ function Page() {
                         </span>
                       ) : (
                         <Image
-                          src={screenshotImgs[i]}
+                          src={`https://www.huntersapp.xyz/developers.monodat.com/${screenshotImgs[i]}`}
                           alt={`image -`}
                           className="h-full w-full object-cover rounded-lg"
                           width={215}

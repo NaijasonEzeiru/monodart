@@ -5,7 +5,7 @@ export default function page() {
     <div>
       <h1 className="text-xl font-bold mb-3">Transactions</h1>
       <Separator />
-      <div className="">No transactions yet.</div>
+      <div className="text-center mt-4">No transactions yet.</div>
     </div>
   );
 }

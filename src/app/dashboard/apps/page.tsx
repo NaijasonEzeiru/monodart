@@ -1,5 +1,7 @@
 "use client";
 
+import { dataType } from "@/app/@types/data";
+import AuthContext from "@/components/auth-context";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,172 +22,74 @@ import { formatUTCDate } from "@/lib/utils";
 import { apiAddress } from "@/lib/variables";
 import { Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { toast } from "sonner";
 import UpdateApp from "./update-app";
 
-const data = [
-  {
-    id: 3,
-    userUid: "963b7a1e-8fd7-4118-9bcb-59c652afba47",
-    lastLoginCode: 1234,
-    accountType: "user",
-    profileStatus: true,
-    firstName: "John",
-    lastName: "Doe",
-    userEmail: "ezeiruchibuike@gmail.com",
-    phoneNumber: "+2348053662673",
-    createdAt: "2025-07-18T13:04:22.000Z",
-    updatedAt: "2025-07-18T13:04:22.000Z",
-    screenshots: [
-      {
-        id: 5,
-        userUid: "963b7a1e-8fd7-4118-9bcb-59c652afba47",
-        screenshot1: null,
-        screenshot2: null,
-        screenshot3: null,
-        screenshot4: null,
-        header: null,
-        appName: "Test-App",
-        createdAt: "2025-07-18T13:09:11.000Z",
-        updatedAt: "2025-07-18T13:09:11.000Z",
-      },
-    ],
-    dataCollected: [
-      {
-        id: 5,
-        userUid: "963b7a1e-8fd7-4118-9bcb-59c652afba47",
-        location: null,
-        personalInfo: null,
-        paymentInfo: null,
-        deviceInfo: null,
-        gps: null,
-        phot: null,
-        biometric: null,
-        contacts: null,
-        appName: "Test-App",
-        createdAt: "2025-07-18T13:09:11.000Z",
-        updatedAt: "2025-07-18T13:09:11.000Z",
-      },
-    ],
-    newApp: [
-      {
-        id: 4,
-        userUid: "963b7a1e-8fd7-4118-9bcb-59c652afba47",
-        appName: "",
-        appDescription: null,
-        appLogo: null,
-        appPrivacyPolicy: null,
-        copyright: null,
-        appVersion: null,
-        whatsNew: null,
-        rating: null,
-        appCat: null,
-        appType: null,
-        appPassword: null,
-        appuserName: null,
-        status: null,
-        apkUrl: null,
-        createdAt: "2025-07-18T13:04:22.000Z",
-        updatedAt: "2025-07-18T13:04:22.000Z",
-      },
-    ],
-    updateApp: [
-      {
-        id: 4,
-        userUid: "963b7a1e-8fd7-4118-9bcb-59c652afba47",
-        appName: "",
-        appDescription: null,
-        appLogo: null,
-        appPrivacyPolicy: null,
-        copyright: null,
-        appVersion: null,
-        whatsNew: null,
-        rating: null,
-        appCat: null,
-        appType: null,
-        appPassword: null,
-        appuserName: null,
-        status: null,
-        apkUrl: null,
-        createdAt: "2025-07-18T13:04:22.000Z",
-        updatedAt: "2025-07-18T13:04:22.000Z",
-      },
-    ],
-    setting: {
-      id: 3,
-      userUid: "963b7a1e-8fd7-4118-9bcb-59c652afba47",
-      userEmail: "ezeiruchibuike@gmail.com",
-      password: "$2b$10$W8pcAOMkiTphvWiIMysUUuk2yMB4OK.NCukVr7rZ7Sc8FXiw3Guai",
-      createdAt: "2025-07-18T13:04:22.000Z",
-      updatedAt: "2025-07-18T13:04:22.000Z",
-    },
-  },
-];
-
 export default function Page() {
+  const { user, authChecking } = useContext(AuthContext);
   const router = useRouter();
   const [appNameSubmitting, setAppNameSubmitting] = useState(false);
   const [appName, setAppName] = useState("");
-  const [apps, setApps] = useState<typeof data>([]);
-  const [fetching, setFectching] = useState(true);
+  // const [fetching, setFectching] = useState(true);
   const [appEditID, setAppEditID] = useState<null | {
     dataCollected: dataCollected;
     screenshots: screenshots;
     appData: appData;
   }>(null);
 
-  useEffect(() => {
-    getApps();
-  }, []);
+  // useEffect(() => {
+  //   getApps();
+  // }, []);
 
   function findApp(appName: string) {
-    const entry = apps[0]; // assuming single element in data array
+    if (user) {
+      const entry = user[0]; // assuming single element in data array
 
-    const [dataCollected] = entry.dataCollected.filter(
-      (item) => item?.appName === appName
-    );
+      const [dataCollected] =
+        entry?.dataCollected?.filter((item) => item?.appName === appName) || [];
 
-    const screenshots = entry.screenshots.filter(
-      (item) => item?.appName === appName
-    );
+      const screenshots = entry?.screenshots?.filter(
+        (item) => item?.appName == appName
+      );
 
-    const appData =
-      entry.updateApp.find((item) => item?.appName === appName) ||
-      entry.newApp.find((item) => item?.appName === appName)!;
+      const appData =
+        entry?.updateApp?.find((item) => item?.appName === appName) ||
+        entry.newApp.find((item) => item?.appName === appName)!;
 
-    console.log({ appData });
+      console.log({ appData });
 
-    setAppEditID({
-      dataCollected,
-      screenshots,
-      appData,
-    });
+      setAppEditID({
+        dataCollected,
+        screenshots,
+        appData,
+      });
+    }
   }
 
-  const getApps = async () => {
-    try {
-      const res = await fetch(`${apiAddress}/fetch-myapps`, {
-        // const res = await fetch(`${apiAddress}/fetch-apps`, {
-        // credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("monodat_token"),
-        },
-      });
-      const response = await res.json();
-      if (res.ok) {
-        setApps(response?.data);
-      } else {
-        toast.error(response?.message || "Something went wrong");
-      }
-    } catch (err) {
-      toast.error("Ooops!!! Something went wrong");
-      console.error({ err });
-    } finally {
-      setFectching(false);
-    }
-  };
+  // const getApps = async () => {
+  //   try {
+  //     const res = await fetch(`${apiAddress}/fetch-myapps`, {
+  //       // const res = await fetch(`${apiAddress}/fetch-apps`, {
+  //       // credentials: "include",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: "Bearer " + localStorage.getItem("monodat_token"),
+  //       },
+  //     });
+  //     const response = await res.json();
+  //     if (res.ok) {
+  //       setApps(response?.data);
+  //     } else {
+  //       toast.error(response?.message || "Something went wrong");
+  //     }
+  //   } catch (err) {
+  //     toast.error("Ooops!!! Something went wrong");
+  //     console.error({ err });
+  //   } finally {
+  //     setFectching(false);
+  //   }
+  // };
 
   const nameSubmit = async () => {
     setAppNameSubmitting(true);
@@ -218,8 +122,6 @@ export default function Page() {
       // setOpenNewAppDialog(false);
     }
   };
-
-  console.log({ check: data[0].userUid });
 
   if (appEditID != null) {
     return <UpdateApp app={appEditID} setAppEditID={setAppEditID} />;
@@ -283,7 +185,7 @@ export default function Page() {
       </div>
       <Separator />
       <div className="mt-8 space-y-5">
-        {fetching &&
+        {authChecking &&
           apps.length == 0 &&
           Array.from({ length: 4 }).map((app, index) => (
             <div className="flex justify-between items-center" key={index}>
@@ -300,8 +202,8 @@ export default function Page() {
               </div>
             </div>
           ))}
-        {apps.length > 0 &&
-          [...apps?.[0]?.newApp, ...apps?.[0]?.updateApp]
+        {user?.length &&
+          [...user?.[0]?.newApp, ...user?.[0]?.updateApp]
             ?.filter((val) => val.appName)
             ?.map((app, index) => (
               <div className="flex justify-between items-center" key={index}>
@@ -310,7 +212,7 @@ export default function Page() {
                     {app?.appName} {app?.appVersion}
                   </p>
                   <i className="text-muted-foreground text-sm">
-                    Created on {formatUTCDate(app?.createdAt)}
+                    Created on {formatUTCDate(app?.createdAt!)}
                   </i>
                 </span>
                 <span className="grid justify-items-center">
