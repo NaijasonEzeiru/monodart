@@ -33,7 +33,7 @@ import { toast } from "sonner";
 // import { findAppInfo } from "./page";
 import { convertToWebP } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
-import { appData, dataCollected, screenshots } from "@/lib/types";
+import { App, dataCollected, screenshots } from "@/app/types/data";
 
 export default function UpdateApp({
   app,
@@ -41,14 +41,14 @@ export default function UpdateApp({
 }: {
   app: {
     dataCollected: dataCollected;
-    appData: appData;
+    appData: App;
     screenshots: screenshots;
   };
   setAppEditID: Dispatch<
     SetStateAction<{
       dataCollected: dataCollected;
       screenshots: screenshots;
-      appData: appData;
+      appData: App;
     } | null>
   >;
 }) {
@@ -112,10 +112,10 @@ export default function UpdateApp({
     app.appData?.apkUrl
   );
   const [screenshotImgs, setScreenshootsImgs] = useState([
-    app.screenshots?.[0]?.screenshot1,
-    app.screenshots?.[0]?.screenshot2,
-    app.screenshots?.[0]?.screenshot3,
-    app.screenshots?.[0]?.screenshot4,
+    app.screenshots?.screenshot1,
+    app.screenshots?.screenshot2,
+    app.screenshots?.screenshot3,
+    app.screenshots?.screenshot4,
   ]);
   const [files, setFiles] = useState<(null | File)[]>([null, null, null, null]);
   const [selectedItems, setSelectedItems] = useState(dataCollected);

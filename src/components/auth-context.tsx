@@ -10,7 +10,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { apiAddress } from "@/lib/variables";
-import { dataType } from "@/app/@types/data";
+import { dataType } from "@/app/types/data";
 
 // export type TUser = {
 //   // id: 2;

@@ -1,5 +1,6 @@
 "use client";
 
+import { App, dataCollected, screenshots } from "@/app/types/data";
 import AuthContext from "@/components/auth-context";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { appData, dataCollected, screenshots } from "@/lib/types";
+// import type { appData, dataCollected, screenshots } from "@/lib/types";
 import { formatUTCDate } from "@/lib/utils";
 import { apiAddress } from "@/lib/variables";
 import { Loader } from "lucide-react";
@@ -34,7 +35,7 @@ export default function Page() {
   const [appEditID, setAppEditID] = useState<null | {
     dataCollected: dataCollected;
     screenshots: screenshots;
-    appData: appData;
+    appData: App;
   }>(null);
 
   // useEffect(() => {
@@ -48,7 +49,7 @@ export default function Page() {
       const [dataCollected] =
         entry?.dataCollected?.filter((item) => item?.appName === appName) || [];
 
-      const screenshots = entry?.screenshots?.filter(
+      const [screenshots] = entry?.screenshots?.filter(
         (item) => item?.appName == appName
       );
 

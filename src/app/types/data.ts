@@ -4,7 +4,7 @@ export type screenshots = {
   screenshot3: null | string;
   screenshot4: null | string;
   appName: string | null;
-}[];
+};
 
 export type dataCollected = {
   location: boolean | null;
@@ -16,7 +16,7 @@ export type dataCollected = {
   biometric: boolean | null;
   contacts: boolean | null;
   appName: string | null;
-}[];
+};
 
 export type App = {
   appName: string | null;
@@ -34,7 +34,7 @@ export type App = {
   status: string | null;
   apkUrl: string | null;
   createdAt: string | null;
-}[];
+};
 
 export type dataType = {
   appReviews: [] | null;
@@ -47,10 +47,10 @@ export type dataType = {
   lastName: string;
   userEmail: string;
   phoneNumber: string;
-  newApp: App;
-  updateApp: App;
-  screenshots: screenshots;
-  dataCollected: dataCollected;
+  newApp: App[];
+  updateApp: App[];
+  screenshots: screenshots[];
+  dataCollected: dataCollected[];
   setting: {
     userEmail: string;
     // password: "$2b$10$3lJYC6dPOOTDkrwbx24eN.z/WEOOkwc6YMc0EMQvUKQvr6Y6DDPXa";
