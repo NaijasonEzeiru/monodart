@@ -1,6 +1,5 @@
 "use client";
 
-import { dataType } from "@/app/@types/data";
 import AuthContext from "@/components/auth-context";
 import { Button } from "@/components/ui/button";
 import {
@@ -186,7 +185,7 @@ export default function Page() {
       <Separator />
       <div className="mt-8 space-y-5">
         {authChecking &&
-          apps.length == 0 &&
+          user?.length == 0 &&
           Array.from({ length: 4 }).map((app, index) => (
             <div className="flex justify-between items-center" key={index}>
               <span className="grid gap-1">
@@ -212,7 +211,7 @@ export default function Page() {
                     {app?.appName} {app?.appVersion}
                   </p>
                   <i className="text-muted-foreground text-sm">
-                    Created on {formatUTCDate(app?.createdAt!)}
+                    Created on {formatUTCDate(app?.createdAt)}
                   </i>
                 </span>
                 <span className="grid justify-items-center">

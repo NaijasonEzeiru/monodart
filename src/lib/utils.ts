@@ -5,7 +5,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatUTCDate(isoString: string): string {
+export function formatUTCDate(isoString: string | null): string {
+  if (!isoString) {
+    return "";
+  }
   const date = new Date(isoString);
   const day = date.getUTCDate();
   const month = date.toLocaleString("en-US", {

@@ -10,8 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { ChevronLeftIcon, TrendingUp } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 import { useContext } from "react";
 
 export default function Page() {

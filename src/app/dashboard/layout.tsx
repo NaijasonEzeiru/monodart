@@ -28,7 +28,7 @@ export default function DashboardLayout({
       });
       router.replace("/auth/login");
     }
-  }, [user]);
+  }, [user, authChecking]);
 
   return (
     <SidebarProvider>
