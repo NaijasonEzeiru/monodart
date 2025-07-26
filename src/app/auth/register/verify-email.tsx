@@ -37,7 +37,7 @@ export default function VerifyEmail({
 }: {
   regDetails: z.infer<typeof RegisterSchema>;
 }) {
-  const { setUser } = useContext(AuthContext);
+  const { checkUserLoggedIn } = useContext(AuthContext);
   const [timeLeft, setTimeLeft] = useState(90);
   const router = useRouter();
 
@@ -68,7 +68,7 @@ export default function VerifyEmail({
       if (res.ok) {
         toast.success(data.message, { description: "You are now logged in" });
         localStorage.setItem("monodat_token", data.token);
-        setUser(data.personal);
+        checkUserLoggedIn!();
         router.push("/dashboard");
       } else {
         toast.error("Registration failed", {

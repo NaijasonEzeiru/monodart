@@ -70,12 +70,12 @@ export default function LoginPage() {
             description: data.message,
           });
         }
-        toast.error("Registration failed", {
+        toast.error("Login failed", {
           description: "Something went wrong",
         });
       }
     } catch (error) {
-      toast.error("Registration failed", {
+      toast.error("Login failed", {
         description: "Something went wrong",
       });
       console.log("error", error);

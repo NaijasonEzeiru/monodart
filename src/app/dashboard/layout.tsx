@@ -23,8 +23,8 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (!authChecking && !user) {
-      toast.error("You are not Authorized to view this page", {
-        description: "Please log in to before accessing this page",
+      toast.error("Please log in to before accessing this page", {
+        // description: "Please log in to before accessing this page",
       });
       router.replace("/auth/login");
     }

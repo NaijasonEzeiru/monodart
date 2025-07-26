@@ -91,7 +91,6 @@ export default function UpdateApp({
     defaultValues: {
       appCat: app.appData?.appCat || undefined,
       appDescription: app.appData?.appDescription || undefined,
-      // appLogo: app.appData?.appLogo || undefined,
       appName: app.appData?.appName || undefined,
       appPassword: app.appData?.appPassword || undefined,
       appPrivacyPolicy: app.appData?.appPrivacyPolicy || undefined,
@@ -99,9 +98,8 @@ export default function UpdateApp({
       appuserName: app.appData?.appuserName || undefined,
       appVersion: app.appData?.appVersion || undefined,
       copyright: app.appData?.copyright || undefined,
-      rating: app.appData?.rating || undefined,
+      rating: Number(app.appData?.rating) || undefined,
       loginAccess: !!app.appData?.appuserName,
-      // whatsNew: app.appData?.whatsNew || undefined,
       dataCollected:
         dataCollected?.filter((h) => h?.selected).map((v) => v?.key) || [],
     },
@@ -385,7 +383,7 @@ export default function UpdateApp({
                       <Image
                         src={`https://www.huntersapp.xyz/developers.monodat.com/${appLogoImg}`}
                         alt="App logo"
-                        className="h-full w-full object-cover rounded-lg"
+                        className="h-32 w-32 object-cover rounded-lg"
                         width={132}
                         height={132}
                       />
@@ -566,7 +564,11 @@ export default function UpdateApp({
                   render={({ field }) => (
                     <FormItem className="space-y-0.5 w-full">
                       <FormControl>
-                        <Input placeholder="Age rating" {...field} />
+                        <Input
+                          placeholder="Age rating"
+                          {...field}
+                          type="number"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -578,7 +580,11 @@ export default function UpdateApp({
                   render={({ field }) => (
                     <FormItem className="space-y-0.5 w-full">
                       <FormControl>
-                        <Input placeholder="App version" {...field} />
+                        <Input
+                          placeholder="App version"
+                          {...field}
+                          type="number"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -776,7 +782,7 @@ export default function UpdateApp({
                 />
               </label>
               <p className="text-sm font-medium text-destructive">
-                {form.formState.errors?.appLogo?.message as string}
+                {form.formState.errors?.apk?.message as string}
               </p>
             </div>
           </div>

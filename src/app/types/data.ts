@@ -36,9 +36,15 @@ export type App = {
   createdAt: string | null;
 };
 
+type balance = {
+  balance1: 0;
+  balance2: 0;
+  allTimeBalance: 0;
+};
+
 export type dataType = {
   appReviews: [] | null;
-  balance: number | null;
+  balance: balance;
   appstoreUsers: number | null;
   userUid: string;
   accountType: string;

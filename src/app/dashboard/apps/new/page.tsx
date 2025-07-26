@@ -5,7 +5,7 @@ import { ArrowRight, ChevronLeftIcon, Loader, Minus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Image from "next/image";
-import { Suspense, useState } from "react";
+import { Suspense, useContext, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -40,6 +40,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { convertToWebP } from "@/lib/utils";
+import AuthContext from "@/components/auth-context";
 
 const dataCollectionQuestionaire = [
   { value: "Location service", selected: false, label: "location" },
@@ -69,6 +70,7 @@ const APPTYPE = ["Application", "Game", "Browser"];
 function Page() {
   const searchParams = useSearchParams();
   const appName = searchParams.get("app");
+  const { checkUserLoggedIn } = useContext(AuthContext);
   const router = useRouter();
 
   const form = useForm<z.infer<typeof NewAppSchema>>({
@@ -291,6 +293,7 @@ function Page() {
       const response = await res.json();
       if (res.ok) {
         toast.success(response?.message || "App created successfully");
+        checkUserLoggedIn!();
         router.push("/dashboard/apps");
       } else {
         toast.error(response?.message || "Something went wrong");
@@ -413,7 +416,7 @@ function Page() {
                       <Image
                         src={`https://www.huntersapp.xyz/developers.monodat.com/${appLogoImg}`}
                         alt="App logo"
-                        className="h-full w-full object-cover rounded-lg"
+                        className="h-32 w-32 object-cover rounded-lg"
                         width={132}
                         height={132}
                       />
@@ -567,7 +570,11 @@ function Page() {
                   render={({ field }) => (
                     <FormItem className="space-y-0.5 w-full">
                       <FormControl>
-                        <Input placeholder="Age rating" {...field} />
+                        <Input
+                          placeholder="Age rating"
+                          {...field}
+                          type="number"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -579,7 +586,11 @@ function Page() {
                   render={({ field }) => (
                     <FormItem className="space-y-0.5 w-full">
                       <FormControl>
-                        <Input placeholder="App version" {...field} />
+                        <Input
+                          placeholder="App version"
+                          {...field}
+                          type="number"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

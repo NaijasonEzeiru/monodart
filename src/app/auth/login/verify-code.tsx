@@ -37,7 +37,7 @@ export default function VerifyCode({
 }: {
   loginDetails: z.infer<typeof LoginSchema>;
 }) {
-  const { setUser } = useContext(AuthContext);
+  const { checkUserLoggedIn } = useContext(AuthContext);
   const [timeLeft, setTimeLeft] = useState(60);
   const router = useRouter();
 
@@ -68,7 +68,8 @@ export default function VerifyCode({
       if (res.ok) {
         toast.success(data.message, { description: "You are now logged in" });
         localStorage.setItem("monodat_token", data.token);
-        setUser(data.personal);
+        checkUserLoggedIn!();
+        // setUser(data.personal);
         router.push("/dashboard");
       } else {
         toast.error("Login failed", {

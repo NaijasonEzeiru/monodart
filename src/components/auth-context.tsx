@@ -65,6 +65,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const checkUserLoggedIn = async () => {
     const token = localStorage.getItem("monodat_token");
     if (!token) {
+      setAuthChecking(false);
       return;
     }
     try {
@@ -82,7 +83,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (res.ok && data?.data) {
         setUser(data.data);
       } else {
-        localStorage.removeItem("monodat_token");
+        // localStorage.removeItem("monodat_token");
         setUser(null);
       }
     } catch (error) {
