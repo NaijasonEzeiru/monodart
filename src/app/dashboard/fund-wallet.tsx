@@ -12,18 +12,35 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { apiAddress } from "@/lib/variables";
 import { CopyIcon } from "lucide-react";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export function FundWallet() {
   const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);
-  // const [acc, setAcc] = useState({});
+  const [acc, setAcc] = useState<{
+    accountNumber?: string;
+    accountName?: string;
+  }>({ accountName: undefined, accountNumber: undefined });
   const [openDialog, setOpenDialog] = useState(false);
+
+  const [timeLeft, setTimeLeft] = useState(30 * 60); // 30 minutes in seconds
+
+  useEffect(() => {
+    if (timeLeft <= 0) return;
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [timeLeft]);
+
+  // Format: mm:ss
+  const minutes = Math.floor(timeLeft / 60);
 
   const generateVirtualAccount = async () => {
     try {
-      //   setOpenDialog(true);
       const res = await fetch(`${apiAddress}/generate-virtual-account`, {
         headers: {
           "Content-Type": "application/json",
@@ -34,7 +51,7 @@ export function FundWallet() {
       });
       const response = await res.json();
       if (res.ok) {
-        // setAcc(response?.data);
+        setAcc(response?.message?.data);
         setLoading(false);
       } else {
         toast.error(response?.message || "Unable to generate virtual account", {
@@ -52,7 +69,11 @@ export function FundWallet() {
   };
 
   return (
-    <Dialog defaultOpen={openDialog} onOpenChange={setOpenDialog}>
+    <Dialog
+      defaultOpen={openDialog}
+      onOpenChange={setOpenDialog}
+      open={openDialog}
+    >
       {/* <DialogTrigger asChild> */}
       <Button
         className="self-end"
@@ -64,7 +85,7 @@ export function FundWallet() {
         Fund Wallet
       </Button>
       {/* </DialogTrigger> */}
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader className="text-center sm:text-center">
           <DialogTitle className="text-xl">Wallet funding</DialogTitle>
           <DialogDescription>
@@ -90,14 +111,14 @@ export function FundWallet() {
             ) : (
               <>
                 {" "}
-                <p className="text-foreground/70">1100987654</p>
+                <p className="text-foreground/70">{acc?.accountNumber}</p>
                 <Button
                   size="icon"
                   className="absolute right-20 bottom-1"
                   variant="ghost"
                   onClick={() => {
                     toast.success("Account number copied!");
-                    navigator.clipboard.writeText((1100987654).toString());
+                    navigator.clipboard.writeText(acc.accountNumber!);
                   }}
                 >
                   <CopyIcon />
@@ -110,9 +131,13 @@ export function FundWallet() {
             {loading ? (
               <Skeleton className="h-6 bg-foreground/5 w-32" />
             ) : (
-              <p className="text-foreground/70">Monnify checkout</p>
+              <p className="text-foreground/70">{acc?.accountName}</p>
             )}
           </div>
+          <p className="text-destructive text-sm text-center">
+            This account number is temporary and expires in{" "}
+            {String(minutes).padStart(2, "0")} minutes.
+          </p>
         </div>
         <DialogFooter>
           <DialogClose asChild>

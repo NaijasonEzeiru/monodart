@@ -1,13 +1,32 @@
 "use client";
 
-import { ChevronLeftIcon } from "lucide-react";
+import { ChevronLeftIcon, LoaderIcon } from "lucide-react";
 import Image from "next/image";
-import { type Dispatch, type SetStateAction } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { App, dataCollected, screenshots } from "@/app/types/data";
 import { Label } from "@/components/ui/label";
+import { apiAddress } from "@/lib/variables";
+import { toast } from "sonner";
+
+type Transformed = {
+  value: string;
+  selected: boolean;
+};
+
+function restructureApiResponse(
+  apiData: Omit<dataCollected, "appName">,
+  mapping: typeof dataCollectionQuestionaire
+): Transformed[] {
+  return mapping.map((item) => ({
+    value: item.value,
+    selected: Boolean(
+      apiData[item.label as keyof Omit<dataCollected, "appName">]
+    ),
+  }));
+}
 
 const dataCollectionQuestionaire = [
   { value: "Location service", selected: false, label: "location" },
@@ -37,12 +56,104 @@ export default function AppReview({
     } | null>
   >;
 }) {
-  const { appName, ...rest } = app.dataCollected;
+  const { appName: _, ...rest } = app.dataCollected;
+  console.log(_);
+
   const trueValues = dataCollectionQuestionaire
     .filter((item) => rest?.[item.label])
     .map((item) => item.value);
 
-  console.log({ appName });
+  const {
+    apkUrl,
+    appCat,
+    appDescription,
+    appLogo,
+    appName,
+    appPassword,
+    appPrivacyPolicy,
+    appType,
+    appVersion,
+    appuserName,
+    copyright,
+    rating,
+    whatsNew = "nothing",
+  } = app.appData;
+  const { screenshot1, screenshot2, screenshot3, screenshot4 } =
+    app.screenshots;
+
+  const body = {
+    apkUrl,
+    appCat,
+    appDescription,
+    appLogo,
+    appName,
+    appPassword,
+    appPrivacyPolicy,
+    appType,
+    appVersion,
+    appuserName,
+    copyright,
+    rating,
+    whatsNew,
+    dataCollected: restructureApiResponse(rest, dataCollectionQuestionaire),
+    screenShots: [screenshot1, screenshot2, screenshot3, screenshot4],
+  };
+
+  const [loading, setLoading] = useState(false);
+
+  async function acceptSubmission() {
+    try {
+      setLoading(true);
+      const res = await fetch(`${apiAddress}/accept-submission`, {
+        method: "POST",
+        // credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("monodat_token"),
+        },
+        body: JSON.stringify(body),
+      });
+      const response = await res.json();
+      if (res.ok) {
+        toast.success(response?.message || "App successfully approved");
+        setAppEditID(null);
+      } else {
+        toast.error(response?.message || "Something went wrong");
+      }
+    } catch (err) {
+      toast.error("Ooops!!! Something went wrong");
+      console.log({ err });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function rejectSubmission() {
+    try {
+      setLoading(true);
+      const res = await fetch(`${apiAddress}/reject-submission-inreview`, {
+        method: "POST",
+        // credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("monodat_token"),
+        },
+        body: JSON.stringify(body),
+      });
+      const response = await res.json();
+      if (res.ok) {
+        toast.success(response?.message || "App rejected approved");
+        setAppEditID(null);
+      } else {
+        toast.error(response?.message || "Something went wrong");
+      }
+    } catch (err) {
+      toast.error("Ooops!!! Something went wrong");
+      console.log({ err });
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <>
@@ -223,12 +334,21 @@ export default function AppReview({
           </ul>
         </div>
         <div className="flex w-full justify-end gap-7">
-          <Button className="" variant="outline">
-            {/* {form.formState.isSubmitting && <Loader className="animate-spin" />} */}
+          <Button
+            disabled={loading}
+            className=""
+            variant="outline"
+            onClick={() => rejectSubmission()}
+          >
+            {loading && <LoaderIcon className="animate-spin" />}
             Reject app
           </Button>
-          <Button className="bg-black hover:bg-black/85">
-            {/* {form.formState.isSubmitting && <Loader className="animate-spin" />} */}
+          <Button
+            disabled={loading}
+            className="bg-black hover:bg-black/85"
+            onClick={() => acceptSubmission()}
+          >
+            {loading && <LoaderIcon className="animate-spin" />}
             Approve app
           </Button>
         </div>
