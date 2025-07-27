@@ -1,7 +1,6 @@
 "use client";
 
 import { App, dataCollected, screenshots } from "@/app/types/data";
-import AuthContext from "@/components/auth-context";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,13 +20,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { apiAddress } from "@/lib/variables";
 import { Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import Filter from "./filter";
 import UpdateApp from "./update-app";
 
 export default function Page() {
-  const { user } = useContext(AuthContext);
   const router = useRouter();
   const [appNameSubmitting, setAppNameSubmitting] = useState(false);
   const [appName, setAppName] = useState("");
