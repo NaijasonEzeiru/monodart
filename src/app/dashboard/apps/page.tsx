@@ -160,25 +160,25 @@ export default function Page() {
       <Tabs defaultValue="all" className="w-full mt-8">
         <TabsList className="flex justify-between bg-transparent">
           <TabsTrigger
-            className="text-xl font-medium text-black data-[state=active]:after:content-[''] data-[state=active]:after:size-3 data-[state=active]:after:bg-primary relative data-[state=active]:after:absolute data-[state=active]:after:-bottom-1 data-[state=active]:after:rounded-full"
+            className="text-lg font-medium text-black data-[state=active]:after:content-[''] data-[state=active]:after:w-full data-[state=active]:after:h-1 data-[state=active]:after:bg-primary relative data-[state=active]:after:absolute data-[state=active]:after:bottom-1.5 data-[state=active]:after:rounded-full"
             value="all"
           >
             All
           </TabsTrigger>
           <TabsTrigger
-            className="text-xl font-medium text-black data-[state=active]:after:content-[''] data-[state=active]:after:size-3 data-[state=active]:after:bg-primary relative data-[state=active]:after:absolute data-[state=active]:after:-bottom-1 data-[state=active]:after:rounded-full"
+            className="text-lg font-medium text-black data-[state=active]:after:content-[''] data-[state=active]:after:w-full data-[state=active]:after:h-1 data-[state=active]:after:bg-primary relative data-[state=active]:after:absolute data-[state=active]:after:bottom-1.5 data-[state=active]:after:rounded-full"
             value="Pending Review"
           >
             Pending Review
           </TabsTrigger>
           <TabsTrigger
-            className="text-xl font-medium text-black data-[state=active]:after:content-[''] data-[state=active]:after:size-3 data-[state=active]:after:bg-primary relative data-[state=active]:after:absolute data-[state=active]:after:-bottom-1 data-[state=active]:after:rounded-full"
+            className="text-lg font-medium text-black data-[state=active]:after:content-[''] data-[state=active]:after:w-full data-[state=active]:after:h-1 data-[state=active]:after:bg-primary relative data-[state=active]:after:absolute data-[state=active]:after:bottom-1.5 data-[state=active]:after:rounded-full"
             value="Active"
           >
             Active
           </TabsTrigger>
           <TabsTrigger
-            className="text-xl font-medium text-black data-[state=active]:after:content-[''] data-[state=active]:after:size-3 data-[state=active]:after:bg-primary relative data-[state=active]:after:absolute data-[state=active]:after:-bottom-1 data-[state=active]:after:rounded-full"
+            className="text-lg font-medium text-black data-[state=active]:after:content-[''] data-[state=active]:after:w-full data-[state=active]:after:h-1 data-[state=active]:after:bg-primary relative data-[state=active]:after:absolute data-[state=active]:after:bottom-1.5 data-[state=active]:after:rounded-full"
             value="Rejected"
           >
             Rejected

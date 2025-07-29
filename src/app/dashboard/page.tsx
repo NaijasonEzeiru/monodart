@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { formatToUSD } from "@/lib/utils";
 import { TrendingUp } from "lucide-react";
 import { useContext } from "react";
 import { FundWallet } from "./fund-wallet";
@@ -38,7 +39,7 @@ export default function Page() {
           <CardHeader>
             <CardDescription>Collection wallet</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {user?.[0]?.balance.balance2 || "0.00"}
+              {formatToUSD(user?.[0]?.balance?.balance2)}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-col items-start gap-1.5 text-sm">
@@ -54,7 +55,7 @@ export default function Page() {
           <CardHeader>
             <CardDescription>Main wallet</CardDescription>
             <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-              {user?.[0]?.balance.balance1 || "0.00"}
+              {formatToUSD(user?.[0]?.balance?.balance1)}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex justify-between flex-col items-start sm:items-center sm:flex-row">

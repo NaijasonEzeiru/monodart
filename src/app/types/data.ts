@@ -37,9 +37,9 @@ export type App = {
 };
 
 type balance = {
-  balance1: 0;
-  balance2: 0;
-  allTimeBalance: 0;
+  balance1: number;
+  balance2: number;
+  allTimeBalance: number;
 };
 
 export type dataType = {

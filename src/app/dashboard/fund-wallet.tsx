@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatToUSD } from "@/lib/utils";
 import { apiAddress } from "@/lib/variables";
 import { CopyIcon } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
@@ -21,6 +22,7 @@ export function FundWallet() {
   const [acc, setAcc] = useState<{
     accountNumber?: string;
     accountName?: string;
+    amount?: number;
   }>({ accountName: undefined, accountNumber: undefined });
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -89,7 +91,9 @@ export function FundWallet() {
         <DialogHeader className="text-center sm:text-center">
           <DialogTitle className="text-xl">Wallet funding</DialogTitle>
           <DialogDescription>
-            Send money to the account below to fund your wallet.
+            Transfer{" "}
+            <span className="font-bold">{formatToUSD(acc.amount!)}</span> naira
+            to the following account details to fund your wallet
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4">
@@ -98,7 +102,7 @@ export function FundWallet() {
             {loading ? (
               <Skeleton className="h-6 bg-foreground/5 w-48" />
             ) : (
-              <p className="text-foreground/70">Moniepoint microfinance bank</p>
+              <p className="text-foreground/70">Safehaven microfinance bank</p>
             )}
           </div>
           <div className="flex flex-col sm:items-center gap-1 py-3 bg-muted/50 rounded-2xl relative">

@@ -5,9 +5,9 @@ import AuthContext from "@/components/auth-context";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatUTCDate } from "@/lib/utils";
-import { apiAddress } from "@/lib/variables";
+// import { apiAddress } from "@/lib/variables";
 import { useContext, useState } from "react";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 import AppReview from "./app-review";
 
 export default function Page() {
@@ -43,35 +43,35 @@ export default function Page() {
     }
   }
 
-  const getReviews = async () => {
-    try {
-      const res = await fetch(`${apiAddress}/fetch-apps-inreview`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("monodat_token"),
-        },
-        // method: "POST",
-        // body: JSON.stringify({ userEmail: user?.[0]?.userEmail }),
-      });
-      const response = await res.json();
-      if (res.ok) {
-        console.log({ res });
-        // setAcc(response?.data);
-        // setLoading(false);
-      } else {
-        toast.error(response?.message || "Unable to generate virtual account", {
-          description: "Please try again",
-        });
-        // setOpenDialog(false);
-      }
-    } catch (err) {
-      toast.error("Unable to generate virtual account", {
-        description: "Please try again",
-      });
-      // setOpenDialog(false);
-      console.error({ err });
-    }
-  };
+  // const getReviews = async () => {
+  //   try {
+  //     const res = await fetch(`${apiAddress}/fetch-apps-inreview`, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: "Bearer " + localStorage.getItem("monodat_token"),
+  //       },
+  //       // method: "POST",
+  //       // body: JSON.stringify({ userEmail: user?.[0]?.userEmail }),
+  //     });
+  //     const response = await res.json();
+  //     if (res.ok) {
+  //       console.log({ res });
+  //       // setAcc(response?.data);
+  //       // setLoading(false);
+  //     } else {
+  //       toast.error(response?.message || "Unable to generate virtual account", {
+  //         description: "Please try again",
+  //       });
+  //       // setOpenDialog(false);
+  //     }
+  //   } catch (err) {
+  //     toast.error("Unable to generate virtual account", {
+  //       description: "Please try again",
+  //     });
+  //     // setOpenDialog(false);
+  //     console.error({ err });
+  //   }
+  // };
 
   if (appEditID != null) {
     return <AppReview app={appEditID} setAppEditID={setAppEditID} />;
@@ -83,7 +83,7 @@ export default function Page() {
         <h1 className="text-xl font-bold">App Review</h1>
       </div>
       <Separator />
-      <button onClick={() => getReviews()}>Hello</button>
+      {/* <button onClick={() => getReviews()}>Hello</button> */}
       <div className="mt-8 space-y-5">
         {authChecking &&
           user?.length == 0 &&

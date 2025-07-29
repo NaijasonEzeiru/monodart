@@ -99,11 +99,12 @@ export default function AppReview({
     screenShots: [screenshot1, screenshot2, screenshot3, screenshot4],
   };
 
-  const [loading, setLoading] = useState(false);
+  const [loadingApprove, setLoadingApprove] = useState(false);
+  const [loadingReject, setLoadingReject] = useState(false);
 
   async function acceptSubmission() {
     try {
-      setLoading(true);
+      setLoadingApprove(true);
       const res = await fetch(`${apiAddress}/accept-submission`, {
         method: "POST",
         // credentials: "include",
@@ -124,13 +125,13 @@ export default function AppReview({
       toast.error("Ooops!!! Something went wrong");
       console.log({ err });
     } finally {
-      setLoading(false);
+      setLoadingApprove(false);
     }
   }
 
   async function rejectSubmission() {
     try {
-      setLoading(true);
+      setLoadingReject(true);
       const res = await fetch(`${apiAddress}/reject-submission-inreview`, {
         method: "POST",
         // credentials: "include",
@@ -151,7 +152,7 @@ export default function AppReview({
       toast.error("Ooops!!! Something went wrong");
       console.log({ err });
     } finally {
-      setLoading(false);
+      setLoadingReject(false);
     }
   }
 
@@ -335,20 +336,20 @@ export default function AppReview({
         </div>
         <div className="flex w-full justify-end gap-7">
           <Button
-            disabled={loading}
+            disabled={loadingApprove || loadingReject}
             className=""
             variant="outline"
             onClick={() => rejectSubmission()}
           >
-            {loading && <LoaderIcon className="animate-spin" />}
+            {loadingReject && <LoaderIcon className="animate-spin" />}
             Reject app
           </Button>
           <Button
-            disabled={loading}
+            disabled={loadingApprove || loadingReject}
             className="bg-black hover:bg-black/85"
             onClick={() => acceptSubmission()}
           >
-            {loading && <LoaderIcon className="animate-spin" />}
+            {loadingApprove && <LoaderIcon className="animate-spin" />}
             Approve app
           </Button>
         </div>
