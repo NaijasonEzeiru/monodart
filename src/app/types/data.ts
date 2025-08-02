@@ -34,6 +34,7 @@ export type App = {
   status: string | null;
   apkUrl: string | null;
   createdAt: string | null;
+  updatedAt: string | null;
 };
 
 type balance = {
@@ -42,8 +43,18 @@ type balance = {
   allTimeBalance: number;
 };
 
+export type AppReviews = {
+  appName: string;
+  comment: string;
+  rating: number;
+  reviewerName: string;
+  developerResponse: null;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type dataType = {
-  appReviews: [] | null;
+  // appReviews: [] | null;
   balance: balance;
   appstoreUsers: number | null;
   userUid: string;
@@ -57,6 +68,7 @@ export type dataType = {
   updateApp: App[];
   screenshots: screenshots[];
   dataCollected: dataCollected[];
+  appReviews: AppReviews | null;
   setting: {
     userEmail: string;
     // password: "$2b$10$3lJYC6dPOOTDkrwbx24eN.z/WEOOkwc6YMc0EMQvUKQvr6Y6DDPXa";

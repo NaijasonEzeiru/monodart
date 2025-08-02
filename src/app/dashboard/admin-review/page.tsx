@@ -1,26 +1,40 @@
 "use client";
 
 import { App, dataCollected, screenshots } from "@/app/types/data";
-import AuthContext from "@/components/auth-context";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatUTCDate } from "@/lib/utils";
+import { apiAddress } from "@/lib/variables";
 // import { apiAddress } from "@/lib/variables";
-import { useContext, useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 // import { toast } from "sonner";
 import AppReview from "./app-review";
 
+type Rev = {
+  screenshots: screenshots[];
+  dataCollected: dataCollected[];
+  newApp: App[];
+  updateApp: App[];
+}[];
+
 export default function Page() {
-  const { user, authChecking } = useContext(AuthContext);
+  // const { user, authChecking } = useContext(AuthContext);
   const [appEditID, setAppEditID] = useState<null | {
     dataCollected: dataCollected;
     screenshots: screenshots;
     appData: App;
   }>(null);
+  const [loading, setLoading] = useState(true);
+  const [acc, setAcc] = useState<Rev | null>(null);
+
+  useEffect(() => {
+    getReviews();
+  }, []);
 
   function findApp(appName: string) {
-    if (user) {
-      const entry = user[0]; // assuming single element in data array
+    if (acc) {
+      const entry = acc[0]; // assuming single element in data array
 
       const [dataCollected] =
         entry?.dataCollected?.filter((item) => item?.appName === appName) || [];
@@ -29,9 +43,7 @@ export default function Page() {
         (item) => item?.appName == appName
       );
 
-      const appData =
-        entry?.updateApp?.find((item) => item?.appName === appName) ||
-        entry.newApp.find((item) => item?.appName === appName)!;
+      const appData = entry.newApp.find((item) => item?.appName === appName)!;
 
       console.log({ appData });
 
@@ -43,38 +55,43 @@ export default function Page() {
     }
   }
 
-  // const getReviews = async () => {
-  //   try {
-  //     const res = await fetch(`${apiAddress}/fetch-apps-inreview`, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: "Bearer " + localStorage.getItem("monodat_token"),
-  //       },
-  //       // method: "POST",
-  //       // body: JSON.stringify({ userEmail: user?.[0]?.userEmail }),
-  //     });
-  //     const response = await res.json();
-  //     if (res.ok) {
-  //       console.log({ res });
-  //       // setAcc(response?.data);
-  //       // setLoading(false);
-  //     } else {
-  //       toast.error(response?.message || "Unable to generate virtual account", {
-  //         description: "Please try again",
-  //       });
-  //       // setOpenDialog(false);
-  //     }
-  //   } catch (err) {
-  //     toast.error("Unable to generate virtual account", {
-  //       description: "Please try again",
-  //     });
-  //     // setOpenDialog(false);
-  //     console.error({ err });
-  //   }
-  // };
+  const getReviews = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${apiAddress}/fetch-apps-inreview`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("monodat_token"),
+        },
+      });
+      const response = await res.json();
+      if (res.ok) {
+        console.log({ res });
+        setAcc(response?.data);
+        setLoading(false);
+      } else {
+        toast.error(response?.message || "Unable to get apps in review", {
+          description: "Please try again",
+        });
+        // setOpenDialog(false);
+      }
+    } catch (err) {
+      toast.error("Unable to get apps in review", {
+        description: "Please try again",
+      });
+      // setOpenDialog(false);
+      console.error({ err });
+    }
+  };
 
   if (appEditID != null) {
-    return <AppReview app={appEditID} setAppEditID={setAppEditID} />;
+    return (
+      <AppReview
+        app={appEditID}
+        setAppEditID={setAppEditID}
+        getReviews={getReviews}
+      />
+    );
   }
 
   return (
@@ -83,10 +100,10 @@ export default function Page() {
         <h1 className="text-xl font-bold">App Review</h1>
       </div>
       <Separator />
-      {/* <button onClick={() => getReviews()}>Hello</button> */}
+      <button onClick={() => getReviews()}>Hello</button>
       <div className="mt-8 space-y-5">
-        {authChecking &&
-          user?.length == 0 &&
+        {loading &&
+          acc?.length == 0 &&
           Array.from({ length: 4 }).map((app, index) => (
             <div className="flex justify-between items-center" key={index}>
               <span className="grid gap-1">
@@ -102,8 +119,8 @@ export default function Page() {
               </div>
             </div>
           ))}
-        {user?.length &&
-          [...user?.[0]?.newApp, ...user?.[0]?.updateApp]
+        {acc?.length ? (
+          [acc?.[0]?.newApp?.[0]]
             ?.filter((val) => val.appName)
             ?.map((app, index) => (
               <div className="flex justify-between items-center" key={index}>
@@ -132,7 +149,10 @@ export default function Page() {
                   </button>
                 </div>
               </div>
-            ))}
+            ))
+        ) : (
+          <p className="text-lg">No apps in review</p>
+        )}
       </div>
     </>
   );

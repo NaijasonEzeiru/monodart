@@ -53,6 +53,10 @@ export default function VerifyCode({
     resolver: zodResolver(VerifyEmailSchema),
   });
 
+  function delay(time: number) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+  }
+
   async function onSubmit(body: z.infer<typeof VerifyEmailSchema>) {
     console.log({ body });
     try {
@@ -69,6 +73,7 @@ export default function VerifyCode({
         toast.success(data.message, { description: "You are now logged in" });
         localStorage.setItem("monodat_token", data.token);
         checkUserLoggedIn!();
+        await delay(1000);
         // setUser(data.personal);
         router.push("/dashboard");
       } else {

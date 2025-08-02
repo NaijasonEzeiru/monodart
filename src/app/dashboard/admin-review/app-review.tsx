@@ -42,6 +42,7 @@ const dataCollectionQuestionaire = [
 export default function AppReview({
   app,
   setAppEditID,
+  getReviews,
 }: {
   app: {
     dataCollected: dataCollected;
@@ -55,6 +56,7 @@ export default function AppReview({
       appData: App;
     } | null>
   >;
+  getReviews: () => Promise<void>;
 }) {
   const { appName: _, ...rest } = app.dataCollected;
   console.log(_);
@@ -117,6 +119,7 @@ export default function AppReview({
       const response = await res.json();
       if (res.ok) {
         toast.success(response?.message || "App successfully approved");
+        getReviews();
         setAppEditID(null);
       } else {
         toast.error(response?.message || "Something went wrong");
@@ -143,7 +146,8 @@ export default function AppReview({
       });
       const response = await res.json();
       if (res.ok) {
-        toast.success(response?.message || "App rejected approved");
+        getReviews();
+        toast.success(response?.message || "App rejected");
         setAppEditID(null);
       } else {
         toast.error(response?.message || "Something went wrong");
