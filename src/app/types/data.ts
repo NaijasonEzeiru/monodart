@@ -36,6 +36,14 @@ export type App = {
   createdAt: string | null;
   updatedAt: string | null;
 };
+export type Review = {
+  comment: string;
+  rating: number;
+  reviewerName: string;
+  developerResponse: null;
+  createdAt: string;
+  updatedAt: string;
+}[];
 
 type balance = {
   balance1: number;

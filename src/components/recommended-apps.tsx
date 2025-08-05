@@ -3,6 +3,7 @@
 import { App, dataCollected, screenshots } from "@/app/types/data";
 import { apiAddress } from "@/lib/variables";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Skeleton } from "./ui/skeleton";
@@ -73,8 +74,9 @@ function RecommendedApps() {
         [apps?.[0]?.newApp?.[0]]
           ?.filter((val) => val.appName)
           ?.map((app) => (
-            <div
-              className="flex gap-7 items-center md:flex-col md:bg-[#FDFBFB] md:px-7 md:pt-2 md:pb-6 rounded-2xl"
+            <Link
+              href={`/app/${app.appName}`}
+              className="flex gap-7 items-center md:flex-col md:bg-[#FDFBFB] md:px-7 md:pt-2 md:pb-6 rounded-2xl hover:no-underline hover:bg-muted hover:md:bg-[#f2f2f2]"
               key={app.appName}
             >
               <Image
@@ -95,7 +97,7 @@ function RecommendedApps() {
                 </p>
                 <p className="text-[#E15610] text-sm">{app.appType}</p>
               </span>
-            </div>
+            </Link>
           ))}
     </div>
   );

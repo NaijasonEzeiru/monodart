@@ -10,6 +10,7 @@ import { App, dataCollected, screenshots } from "@/app/types/data";
 import { Label } from "@/components/ui/label";
 import { apiAddress } from "@/lib/variables";
 import { toast } from "sonner";
+import { dataCollectionQuestionaire } from "@/lib/utils";
 
 type Transformed = {
   value: string;
@@ -27,17 +28,6 @@ function restructureApiResponse(
     ),
   }));
 }
-
-const dataCollectionQuestionaire = [
-  { value: "Location service", selected: false, label: "location" },
-  { value: "Personal information", selected: false, label: "personalInfo" },
-  { value: "Payment information", selected: false, label: "paymentInfo" },
-  { value: "Device information", selected: false, label: "deviceInfo" },
-  { value: "GPS tracking", selected: false, label: "gps" },
-  { value: "Images data", selected: false, label: "phot" },
-  { value: "Biometrics data", selected: false, label: "biometric" },
-  { value: "User contacts", selected: false, label: "contacts" },
-] as const;
 
 export default function AppReview({
   app,

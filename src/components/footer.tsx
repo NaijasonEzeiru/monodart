@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Mail, UserIcon, Youtube } from "lucide-react";
+import { Facebook, Instagram, Mail, Youtube } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 
@@ -55,7 +55,7 @@ function Footer() {
           </span>
         </div>
       </footer>
-      <div className="sm:hidden fixed -translate-x-1/2 left-1/2 bottom-0 bg-white gap-3 flex justify-between py-4 rounded-t-2xl shadow px-8 w-screen border-t border-border">
+      <div className="sm:hidden fixed -translate-x-1/2 left-1/2 bottom-0 bg-white gap-3 flex justify-between py-4 rounded-t-2xl shadow px-16 w-screen border-t border-border">
         <button
           // href={link.href}
           // {...(activeLink.endsWith(link.href.toLowerCase())
@@ -150,13 +150,13 @@ function Footer() {
           </svg>
           Games
         </button>
-        <button
+        {/* <button
           className="flex items-center flex-col text-xs data-[active]:text-primary
         data-[active]:scale-110 data-[active]:font-medium"
         >
           <UserIcon className="size-6" />
           Profile
-        </button>
+        </button> */}
       </div>
     </>
   );
