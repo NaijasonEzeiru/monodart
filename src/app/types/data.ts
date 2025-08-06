@@ -61,6 +61,15 @@ export type AppReviews = {
   updatedAt: string;
 };
 
+type Transaction = {
+  amount: number;
+  narration: string;
+  type: string;
+  transactionReference: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type dataType = {
   // appReviews: [] | null;
   balance: balance;
@@ -77,6 +86,7 @@ export type dataType = {
   screenshots: screenshots[];
   dataCollected: dataCollected[];
   appReviews: AppReviews | null;
+  transactions: Transaction[] | null;
   setting: {
     userEmail: string;
     // password: "$2b$10$3lJYC6dPOOTDkrwbx24eN.z/WEOOkwc6YMc0EMQvUKQvr6Y6DDPXa";

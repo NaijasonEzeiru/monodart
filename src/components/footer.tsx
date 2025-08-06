@@ -55,7 +55,7 @@ function Footer() {
           </span>
         </div>
       </footer>
-      <div className="sm:hidden fixed -translate-x-1/2 left-1/2 bottom-0 bg-white gap-3 flex justify-between py-4 rounded-t-2xl shadow px-16 w-screen border-t border-border">
+      <div className="sm:hidden fixed -translate-x-1/2 left-1/2 bottom-0 bg-white gap-3 flex justify-evenly py-4 rounded-t-2xl shadow w-screen border-t border-border">
         <button
           // href={link.href}
           // {...(activeLink.endsWith(link.href.toLowerCase())

@@ -100,25 +100,7 @@ export default function Page() {
         <h1 className="text-xl font-bold">App Review</h1>
       </div>
       <Separator />
-      <button onClick={() => getReviews()}>Hello</button>
       <div className="mt-8 space-y-5">
-        {loading &&
-          acc?.length == 0 &&
-          Array.from({ length: 4 }).map((app, index) => (
-            <div className="flex justify-between items-center" key={index}>
-              <span className="grid gap-1">
-                <Skeleton className="h-5 w-32" />
-                <Skeleton className="h-3 w-36" />
-              </span>
-              <span className="grid justify-items-center gap-2">
-                <Skeleton className="h-4 w-11" />
-                <Skeleton className="h-4 w-24" />
-              </span>
-              <div className="w-24">
-                <Skeleton className="size-10 rounded-full mx-auto" />
-              </div>
-            </div>
-          ))}
         {acc?.length ? (
           [acc?.[0]?.newApp?.[0]]
             ?.filter((val) => val.appName)
@@ -150,6 +132,22 @@ export default function Page() {
                 </div>
               </div>
             ))
+        ) : loading ? (
+          Array.from({ length: 4 }).map((app, index) => (
+            <div className="flex justify-between items-center" key={index}>
+              <span className="grid gap-1">
+                <Skeleton className="h-5 w-32" />
+                <Skeleton className="h-3 w-36" />
+              </span>
+              <span className="grid justify-items-center gap-2">
+                <Skeleton className="h-4 w-11" />
+                <Skeleton className="h-4 w-24" />
+              </span>
+              <div className="w-24">
+                <Skeleton className="size-10 rounded-full mx-auto" />
+              </div>
+            </div>
+          ))
         ) : (
           <p className="text-lg">No apps in review</p>
         )}

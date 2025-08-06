@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatToUSD } from "@/lib/utils";
+import { formatNaira } from "@/lib/utils";
 import { apiAddress } from "@/lib/variables";
 import { CopyIcon } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
@@ -91,9 +91,19 @@ export function FundWallet() {
         <DialogHeader className="text-center sm:text-center">
           <DialogTitle className="text-xl">Wallet funding</DialogTitle>
           <DialogDescription>
-            Transfer{" "}
-            <span className="font-bold">{formatToUSD(acc.amount!)}</span> naira
-            to the following account details to fund your wallet
+            {loading ? (
+              <div className="flex flex-col gap-1.5">
+                <Skeleton className="w-full h-3" />
+                <Skeleton className="w-12 h-3 mx-auto" />
+              </div>
+            ) : (
+              <>
+                {" "}
+                Transfer{" "}
+                <span className="font-bold">{formatNaira(acc.amount!)}</span> to
+                the following account details to fund your wallet
+              </>
+            )}
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4">

@@ -15,6 +15,14 @@ export function formatToUSD(amount: number | undefined) {
   }).format(amount);
 }
 
+export const formatNaira = (amount: number): string => {
+  return new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+    // minimumFractionDigits: 0, // optional, removes decimals
+  }).format(amount);
+};
+
 export function formatUTCDate(isoString: string | null): string {
   if (!isoString) {
     return "";

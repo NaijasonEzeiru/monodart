@@ -6,12 +6,12 @@ import { Input } from "./ui/input";
 function Hero() {
   return (
     <section className="bg-background lg:bg-black px-10 sm:px-16 lg:px-24 pt-32 lg:pb-60 text-white">
-      <div className="mt-6 mb-4 relative hidden md:block ">
+      <div className="mt-6 mb-4 relative">
         <Input
-          placeholder="Search store"
-          className="bg-border/10 w-44 rounded-full placeholder:text-right text-sm border-none"
+          placeholder="Search store..."
+          className="bg-border/10 w-full lg:w-44 rounded-full placeholder:text-center lg:placeholder:text-right text-sm border-gray-500 h-10 lg:border-none"
         />
-        <Search className="absolute opacity-70 bottom-2 left-2" />
+        <Search className="absolute lg:opacity-70 bottom-2 lg:left-2 right-3 text-gray-600" />
       </div>
       <div className="flex gap-24">
         <div className="bg-gradient-to-tr from-[#8F3308] to-[#741954] rounded-[30px] pl-16 pr-8 pt-12 lg:pt-32 lg:pb-20 pb-20 relative w-full">

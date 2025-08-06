@@ -102,7 +102,7 @@ function Header() {
           <div
             className={`${
               !openNav && "-translate-y-full"
-            } flex bg-background text-foreground lg:pl-14 lg:pr-0 lg:justify-between items-center justify-center lg:h-auto bg-customRed py-6 px-14 lg:gap-6 w-full left-0 fixed h-screen text-xl gap-12 transition-transform top-0 lg:static lg:translate-y-0 lg:py-0 lg:text-lg flex-col lg:flex-row z-50 duration-500 lg:bg-black lg:text-white`}
+            } flex bg-background text-foreground lg:pl-40 lg:pr-0 lg:justify-between items-center justify-center lg:h-auto bg-customRed py-6 px-14 lg:gap-6 w-full left-0 fixed h-screen text-xl gap-12 transition-transform top-0 lg:static lg:translate-y-0 lg:py-0 lg:text-lg flex-col lg:flex-row z-50 duration-500 lg:bg-black lg:text-white`}
           >
             <button
               aria-expanded={openNav}
@@ -119,22 +119,16 @@ function Header() {
               <Link href="#" className="px-3 hover:opacity-65">
                 Monodat
               </Link>
-              <Link href="#" className="px-3 hover:opacity-65">
+              {/* <Link href="#" className="px-3 hover:opacity-65">
                 Payments
-              </Link>
+              </Link> */}
               <Link href="#" className="px-3 hover:opacity-65">
                 Categories
               </Link>
             </span>
             <span className="flex flex-col lg:flex-row gap-12 lg:gap-4">
               <Link
-                href="/auth/login"
-                className="bg-[#D9D9D9] hover:bg-gray-300 text-black rounded-full px-8 py-2 transition-colors lg:w-fit w-full text-center hover:no-underline"
-              >
-                Sign in
-              </Link>
-              <Link
-                href="/auth/login"
+                href="#"
                 className="bg-blue-600 rounded-full text-white px-8 py-2 hover:bg-blue-700 transition-colors lg:w-fit w-full text-center hover:no-underline"
               >
                 Download
