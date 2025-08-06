@@ -5,7 +5,7 @@ import React from "react";
 function Footer() {
   return (
     <>
-      <footer className="bg-black text-white pt-16 sm:pt-24 lg:pt-32 pb-24 px-10 sm:px-16 lg:px-24">
+      <footer className="hidden sm:block bg-black text-white pt-16 sm:pt-24 lg:pt-32 pb-24 px-10 sm:px-16 lg:px-24">
         <span className="flex flex-col md:flex-row sm:mb-20 lg:mb-32 gap-5 md:gap-14">
           <p className="text-2xl font-medium md:font-semibold">Monodat inc.</p>
           <p className="text-xs font-semibold mb-4 md:text-2xl">
