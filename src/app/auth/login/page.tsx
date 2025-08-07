@@ -168,7 +168,9 @@ export default function LoginPage() {
       <div className="w-full font-semibold flex justify-between gap-2 flex-col lg:flex-row items-center text-white text-sm">
         <span className="flex gap-1 items-center">
           <Globe />
-          <p className="whitespace-nowrap">Monodat website</p>
+          <a href="https://monodat.com" className="whitespace-nowrap">
+            Monodat website
+          </a>
         </span>
         <span className="flex gap-1 items-center">
           <FileStack />

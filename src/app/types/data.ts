@@ -86,7 +86,7 @@ export type dataType = {
   screenshots: screenshots[];
   dataCollected: dataCollected[];
   appReviews: AppReviews | null;
-  transactions: Transaction[] | null;
+  transactions: Transaction | null;
   setting: {
     userEmail: string;
     // password: "$2b$10$3lJYC6dPOOTDkrwbx24eN.z/WEOOkwc6YMc0EMQvUKQvr6Y6DDPXa";

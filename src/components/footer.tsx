@@ -42,7 +42,7 @@ function Footer() {
             <h4>Developers</h4>
             <a href="#">Payments</a>
             <a href="#">Documentation</a>
-            <a href="#">Developers</a>
+            <a href="/dashboard">Developers</a>
           </span>
           <span className="flex flex-col gap-3 sm:gap-4 lg:gap-6">
             <h4 className="whitespace-nowrap">Connect with us</h4>

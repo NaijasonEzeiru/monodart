@@ -102,7 +102,7 @@ function Header() {
           <div
             className={`${
               !openNav && "-translate-y-full"
-            } flex bg-background text-foreground lg:pl-40 lg:pr-0 lg:justify-between items-center justify-center lg:h-auto bg-customRed py-6 px-14 lg:gap-6 w-full left-0 fixed h-screen text-xl gap-12 transition-transform top-0 lg:static lg:translate-y-0 lg:py-0 lg:text-lg flex-col lg:flex-row z-50 duration-500 lg:bg-black lg:text-white`}
+            } flex bg-background text-foreground lg:pl-52 lg:pr-0 lg:justify-between items-center justify-center lg:h-auto bg-customRed py-6 px-14 lg:gap-6 w-full left-0 fixed h-screen text-xl gap-12 transition-transform top-0 lg:static lg:translate-y-0 lg:py-0 lg:text-lg flex-col lg:flex-row z-50 duration-500 lg:bg-black lg:text-white`}
           >
             <button
               aria-expanded={openNav}
@@ -113,18 +113,21 @@ function Header() {
               X
             </button>
             <span className="flex flex-col lg:flex-row gap-12 lg:gap-4">
-              <Link href="#" className="px-3 hover:opacity-65">
+              <Link href="/dashboard" className="px-3 hover:opacity-65">
                 Developers
               </Link>
-              <Link href="#" className="px-3 hover:opacity-65">
+              <Link
+                href="https://monodat.com"
+                className="px-3 hover:opacity-65"
+              >
                 Monodat
               </Link>
               {/* <Link href="#" className="px-3 hover:opacity-65">
                 Payments
               </Link> */}
-              <Link href="#" className="px-3 hover:opacity-65">
+              {/* <Link href="#" className="px-3 hover:opacity-65">
                 Categories
-              </Link>
+              </Link> */}
             </span>
             <span className="flex flex-col lg:flex-row gap-12 lg:gap-4">
               <Link
