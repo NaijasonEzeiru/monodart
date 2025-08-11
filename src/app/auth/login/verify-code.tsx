@@ -37,8 +37,8 @@ export default function VerifyCode({
 }: {
   loginDetails: z.infer<typeof LoginSchema>;
 }) {
-  const { checkUserLoggedIn } = useContext(AuthContext);
-  const [timeLeft, setTimeLeft] = useState(60);
+  const { checkUserLoggedIn, setAuthChecking } = useContext(AuthContext);
+  const [timeLeft, setTimeLeft] = useState(90);
   const router = useRouter();
 
   useEffect(() => {
@@ -53,9 +53,9 @@ export default function VerifyCode({
     resolver: zodResolver(VerifyEmailSchema),
   });
 
-  function delay(time: number) {
-    return new Promise((resolve) => setTimeout(resolve, time));
-  }
+  // function delay(time: number) {
+  //   return new Promise((resolve) => setTimeout(resolve, time));
+  // }
 
   async function onSubmit(body: z.infer<typeof VerifyEmailSchema>) {
     console.log({ body });
@@ -72,8 +72,9 @@ export default function VerifyCode({
       if (res.ok) {
         toast.success(data.message, { description: "You are now logged in" });
         localStorage.setItem("monodat_token", data.token);
+        setAuthChecking!(true);
         checkUserLoggedIn!();
-        await delay(1000);
+        // await delay(2000);
         // setUser(data.personal);
         router.push("/dashboard");
       } else {

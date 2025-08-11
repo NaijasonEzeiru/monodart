@@ -34,6 +34,7 @@ import { toast } from "sonner";
 import { convertToWebP } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { App, dataCollected, screenshots } from "@/app/types/data";
+import { Progress } from "@/components/ui/progress";
 
 export default function UpdateApp({
   app,
@@ -117,41 +118,53 @@ export default function UpdateApp({
   ]);
   const [files, setFiles] = useState<(null | File)[]>([null, null, null, null]);
   const [selectedItems, setSelectedItems] = useState(dataCollected);
+  const [progress, setProgress] = useState<null | number>(null);
 
   const handleAPKUpload = async (apk: File | undefined) => {
     if (apk) {
       setApkFile("loading");
-      const formData = new FormData();
-      try {
-        formData.append("file", apk);
-        if (app.appData) {
-          formData.append("appName", app.appData.appName!);
-        }
-        const res = await fetch(`${apiAddress}/upload-app`, {
-          method: "POST",
-          body: formData,
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("monodat_token"),
-          },
-        });
-        const response = await res.json();
-        if (res.ok) {
-          setApkFile(response?.apkUrl);
-          return;
-        } else {
+      const chunkSize = 1024 * 1024; // 1MB per chunk
+      const totalChunks = Math.ceil(apk.size / chunkSize);
+
+      for (let chunkNumber = 0; chunkNumber < totalChunks; chunkNumber++) {
+        const start = chunkNumber * chunkSize;
+        const end = Math.min(start + chunkSize, apk.size);
+        const chunk = apk.slice(start, end);
+
+        const formData = new FormData();
+        formData.append("chunk", chunk);
+        formData.append("fileName", `${app.appData.appName}.apk`);
+        formData.append("chunkIndex", chunkNumber.toString());
+        formData.append("totalChunks", totalChunks.toString());
+        formData.append("appName", app.appData.appName!);
+        try {
+          // formData.append("file", apk);
+          // formData.append("appName", appName);
+          const res = await fetch(`${apiAddress}/upload-app`, {
+            method: "POST",
+            body: formData,
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("monodat_token"),
+            },
+          });
+          const response = await res.json();
+          if (!res.ok) throw new Error(response.error || "Chunk upload failed");
+          if (chunkNumber + 1 === totalChunks) {
+            setApkFile(response?.apkUrl);
+            setProgress(null);
+            return;
+          } else {
+            setProgress(((chunkNumber + 1) / totalChunks) * 100);
+            setApkFile("");
+          }
+        } catch (err) {
           form.setValue("apk", "");
           setApkFile("");
           toast.error("Unable to upload APK", {
-            description: response?.message || "Something went wrong",
+            description: "Ooops!!! Something went wrong",
           });
+          console.log({ err });
         }
-      } catch (err) {
-        form.setValue("apk", "");
-        setApkFile("");
-        toast.error("Unable to upload APK", {
-          description: "Ooops!!! Something went wrong",
-        });
-        console.log({ err });
       }
     }
   };
@@ -781,6 +794,14 @@ export default function UpdateApp({
                   )}
                 />
               </label>
+              {progress && (
+                <div className="w-40 flex gap-1 items-center flex-col">
+                  <Progress value={progress} className="mt-2 w-40 h-3" />
+                  <i className="text-bold text-green-700 text-sm">
+                    {progress.toFixed()}%
+                  </i>
+                </div>
+              )}
               <p className="text-sm font-medium text-destructive">
                 {form.formState.errors?.apk?.message as string}
               </p>

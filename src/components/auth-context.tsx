@@ -27,6 +27,7 @@ interface IContext {
   user: dataType | null;
   signingOut: boolean;
   setUser: Dispatch<SetStateAction<dataType | null>>;
+  setAuthChecking?: Dispatch<SetStateAction<boolean>>;
   authChecking: boolean;
   signout?: () => Promise<void>;
   checkUserLoggedIn?: () => Promise<void>;
@@ -102,6 +103,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser,
         signout,
         checkUserLoggedIn,
+        setAuthChecking,
       }}
     >
       {children}{" "}

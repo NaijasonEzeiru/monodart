@@ -41,6 +41,7 @@ import {
 } from "@/components/ui/select";
 import { convertToWebP } from "@/lib/utils";
 import AuthContext from "@/components/auth-context";
+import { Progress } from "@/components/ui/progress";
 
 const dataCollectionQuestionaire = [
   { value: "Location service", selected: false, label: "location" },
@@ -72,6 +73,7 @@ function Page() {
   const appName = searchParams.get("app");
   const { checkUserLoggedIn } = useContext(AuthContext);
   const router = useRouter();
+  const [progress, setProgress] = useState<null | number>(null);
 
   const form = useForm<z.infer<typeof NewAppSchema>>({
     resolver: zodResolver(NewAppSchema),
@@ -153,35 +155,48 @@ function Page() {
   const handleAPKUpload = async (apk: File | undefined) => {
     if (apk && appName) {
       setApkFile("loading");
-      const formData = new FormData();
-      try {
-        formData.append("file", apk);
-        formData.append("appName", appName);
-        const res = await fetch(`${apiAddress}/upload-app`, {
-          method: "POST",
-          body: formData,
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("monodat_token"),
-          },
-        });
-        const response = await res.json();
-        if (res.ok) {
-          setApkFile(response?.apkUrl);
-          return;
-        } else {
+      const chunkSize = 1024 * 1024; // 1MB per chunk
+      const totalChunks = Math.ceil(apk.size / chunkSize);
+
+      for (let chunkNumber = 0; chunkNumber < totalChunks; chunkNumber++) {
+        const start = chunkNumber * chunkSize;
+        const end = Math.min(start + chunkSize, apk.size);
+        const chunk = apk.slice(start, end);
+
+        const formData = new FormData();
+        formData.append("chunk", chunk);
+        formData.append("fileName", `${appName}.apk`);
+        formData.append("chunkIndex", chunkNumber.toString());
+        formData.append("totalChunks", totalChunks.toString());
+        formData.append("appName", appName); // Optional
+        try {
+          // formData.append("file", apk);
+          // formData.append("appName", appName);
+          const res = await fetch(`${apiAddress}/upload-app`, {
+            method: "POST",
+            body: formData,
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("monodat_token"),
+            },
+          });
+          const response = await res.json();
+          if (!res.ok) throw new Error(response.error || "Chunk upload failed");
+          if (chunkNumber + 1 === totalChunks) {
+            setApkFile(response?.apkUrl);
+            setProgress(null);
+            return;
+          } else {
+            setProgress(((chunkNumber + 1) / totalChunks) * 100);
+            setApkFile("");
+          }
+        } catch (err) {
           form.setValue("apk", "");
           setApkFile("");
           toast.error("Unable to upload APK", {
-            description: response?.message || "Something went wrong",
+            description: "Ooops!!! Something went wrong",
           });
+          console.log({ err });
         }
-      } catch (err) {
-        form.setValue("apk", "");
-        setApkFile("");
-        toast.error("Unable to upload APK", {
-          description: "Ooops!!! Something went wrong",
-        });
-        console.log({ err });
       }
     } else if (!appName) {
       toast.error("App name is undefined");
@@ -197,55 +212,68 @@ function Page() {
         .refine((files) => files.size <= 5000000, "Max image size is 5MB.")
         .safeParse(img);
       if (validate?.error) {
-        form.setError("screenShots", {
+        form.setError(`screenShots.${i}`, {
           message: validate.error?.issues[0].message,
         });
         return;
       }
 
-      const items = [...screenshotImgs];
-      const w = [...files];
-      w[i] = img;
-      setFiles(w);
-      // items[i] = URL.createObjectURL(img);
-      items[i] = "loading";
-      setScreenshootsImgs([...items]);
-      const formData = new FormData();
-      try {
-        const webpFile = await convertToWebP(img);
-        console.log({ webpFile });
-        formData.append("file", webpFile);
-        formData.append("imageNumber", (i + 1).toString());
-        formData.append("appName", appName);
-        formData.append("imageCat", "screenshot");
-        const res = await fetch(`${apiAddress}/upload-images`, {
-          method: "POST",
-          // credentials: "include",
-          body: formData,
-          headers: {
-            // "Content-Type": "application/json"
-            Authorization: "Bearer " + localStorage.getItem("monodat_token"),
-          },
-        });
-        const response = await res.json();
-        if (res.ok) {
-          items[i] = response?.publicUrl;
+      const imgCheck = document.createElement("img");
+      imgCheck.src = URL.createObjectURL(img);
+
+      imgCheck.onload = async () => {
+        if (imgCheck.width === 1290 && imgCheck.height === 2796) {
+          const items = [...screenshotImgs];
+          const w = [...files];
+          w[i] = img;
+          setFiles(w);
+          // items[i] = URL.createObjectURL(img);
+          items[i] = "loading";
+          setScreenshootsImgs([...items]);
+          const formData = new FormData();
+          try {
+            const webpFile = await convertToWebP(img);
+            console.log({ webpFile });
+            formData.append("file", webpFile);
+            formData.append("imageNumber", (i + 1).toString());
+            formData.append("appName", appName);
+            formData.append("imageCat", "screenshot");
+            const res = await fetch(`${apiAddress}/upload-images`, {
+              method: "POST",
+              // credentials: "include",
+              body: formData,
+              headers: {
+                // "Content-Type": "application/json"
+                Authorization:
+                  "Bearer " + localStorage.getItem("monodat_token"),
+              },
+            });
+            const response = await res.json();
+            if (res.ok) {
+              items[i] = response?.publicUrl;
+            } else {
+              items[i] = "";
+              form.setValue(`screenShots.${i}`, "");
+              toast.error("Unable to upload image", {
+                description: response?.message || "Something went wrong",
+              });
+            }
+          } catch (err) {
+            items[i] = "";
+            form.setValue(`screenShots.${i}`, "");
+            toast.error("Unable to upload image", {
+              description: "Ooops!!! Something went wrong",
+            });
+            console.log({ err });
+          }
+          setScreenshootsImgs([...items]);
         } else {
-          items[i] = "";
-          form.setValue(`screenShots.${i}`, "");
-          toast.error("Unable to upload image", {
-            description: response?.message || "Something went wrong",
+          form.setError(`screenShots.${i}`, {
+            message: `Image must be exactly 1290 x 2796px. Your image is ${imgCheck.width} x ${imgCheck.height}px.`,
           });
         }
-      } catch (err) {
-        items[i] = "";
-        form.setValue(`screenShots.${i}`, "");
-        toast.error("Unable to upload image", {
-          description: "Ooops!!! Something went wrong",
-        });
-        console.log({ err });
-      }
-      setScreenshootsImgs([...items]);
+        URL.revokeObjectURL(imgCheck.src);
+      };
     } else if (!appName) {
       toast.error("App name is undefined");
       router.push("/dashboard/apps");
@@ -536,7 +564,7 @@ function Page() {
                     )}
                   />
                 </label>
-                <p className="text-sm font-medium text-destructive">
+                <p className="text-sm font-medium text-destructive w-[215px]">
                   {form.formState.errors?.screenShots?.[i]?.message as string}
                 </p>
                 <button
@@ -815,6 +843,14 @@ function Page() {
                   )}
                 />
               </label>
+              {progress && (
+                <div className="w-40 flex gap-1 items-center flex-col">
+                  <Progress value={progress} className="mt-2 w-40 h-3" />
+                  <i className="text-bold text-green-700 text-sm">
+                    {progress.toFixed()}%
+                  </i>
+                </div>
+              )}
               <p className="text-sm font-medium text-destructive">
                 {form.formState.errors?.appLogo?.message as string}
               </p>
